@@ -32,4 +32,36 @@ For server side help, type 'help contents'
 
 MariaDB [(none)]> go C:/Users/felix/Desktop/aula1.sql
     -> 
-    -> 
+    -> MariaDB [(none)]> source C:/Users/felix/Desktop/aula1.sql
+Query OK, 1 row affected (0.006 sec)
+
+Database changed
+Query OK, 0 rows affected (0.248 sec)
+
+Query OK, 0 rows affected (0.493 sec)
+
++-----------------+
+| Tables_in_aula1 |
++-----------------+
+| t1              |
+| t2              |
++-----------------+
+2 rows in set (0.001 sec)
+
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| matricula | int(11)     | NO   | PRI | NULL    |       |
+| nome      | varchar(30) | NO   |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+2 rows in set (0.036 sec)
+
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| sigla  | char(2)     | NO   | PRI | NULL    |       |
+| estado | varchar(25) | NO   |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+2 rows in set (0.016 sec)
+
+MariaDB [aula1]> quit

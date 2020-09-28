@@ -1,0 +1,209 @@
+MariaDB [ex1]> create database ex1;
+
+MariaDB [ex1]> use ex1
+
+MariaDB [ex1]> create table aluno(
+    -> matricula int auto_increment primary key,
+    -> nome varchar(30) not null,
+    -> sexo char(1) default 'm',
+    -> curso char(3) default 'ADS',
+    -> nota numeric(5,2) default 0
+    -> );
+Query OK, 0 rows affected (0.524 sec)
+
+MariaDB [ex1]> /*1 - qual comando insere a coluna faltas no fim da tabela*/
+MariaDB [ex1]> /*2 - qual comando insere a coluna CPF apos o nome*/
+MariaDB [ex1]> /*3 - qual comando altera o tamanho da coluna nome para 40 mantendo as demais caracteristicas*/
+MariaDB [ex1]> /*4 - qual comando altera o valor default no curso para SEG*/
+MariaDB [ex1]> /*5 - qual comando altera o valor default da nota para 5*/
+MariaDB [ex1]> /*6 - qual comando insere a data de nascimento obrigatoria*/
+MariaDB [ex1]> /*7 - qual comando torna o CPF unico*/
+MariaDB [ex1]> /*8 - qual comando troca a variavel nota por n1 mantendo as demais caracteristicas*/
+
+MariaDB [ex1]> /*
+   /*> 1
+   /*> */
+MariaDB [ex1]> alter table aluno
+    -> add faltas int default 0;
+Query OK, 0 rows affected (0.562 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [ex1]> /*
+   /*> 2
+   /*> */
+MariaDB [ex1]> alter table aluno
+    -> add cpf char(11) not null
+    -> after nome;
+Query OK, 0 rows affected (0.184 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [ex1]> /*
+   /*> 3
+   /*> */
+MariaDB [ex1]> alter table aluno
+    -> modify nome varchar(40) not null;
+Query OK, 0 rows affected (0.209 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [ex1]> /*
+   /*> 4
+   /*> */
+MariaDB [ex1]> alter table aluno
+    -> modify curso char(3) default 'SEG'
+    -> ;
+Query OK, 0 rows affected (0.129 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [ex1]> show tables
+    -> ;
++---------------+
+| Tables_in_ex1 |
++---------------+
+| aluno         |
++---------------+
+1 row in set (0.001 sec)
+
+MariaDB [ex1]> desc aluno;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| matricula | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nome      | varchar(40)  | NO   |     | NULL    |                |
+| cpf       | char(11)     | NO   |     | NULL    |                |
+| sexo      | char(1)      | YES  |     | m       |                |
+| curso     | char(3)      | YES  |     | SEG     |                |
+| nota      | decimal(5,2) | YES  |     | 0.00    |                |
+| faltas    | int(11)      | YES  |     | 0       |                |
++-----------+--------------+------+-----+---------+----------------+
+7 rows in set (0.159 sec)
+
+MariaDB [ex1]> /*
+   /*> 5
+   /*> */
+MariaDB [ex1]> alter table aluno
+    -> alter nota set default 5;
+Query OK, 0 rows affected (0.035 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [ex1]> /*
+   /*> 6
+   /*> */
+MariaDB [ex1]> alter table aluno
+    -> add dataNasci date not null;
+Query OK, 0 rows affected (0.298 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [ex1]> desc aluno;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| matricula | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nome      | varchar(40)  | NO   |     | NULL    |                |
+| cpf       | char(11)     | NO   |     | NULL    |                |
+| sexo      | char(1)      | YES  |     | m       |                |
+| curso     | char(3)      | YES  |     | SEG     |                |
+| nota      | decimal(5,2) | YES  |     | 5.00    |                |
+| faltas    | int(11)      | YES  |     | 0       |                |
+| dataNasci | date         | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+8 rows in set (0.038 sec)
+
+MariaDB [ex1]> /*
+   /*> 7
+   /*> */
+MariaDB [ex1]> alter table aluno modify cpf char(11) not null unique;
+Query OK, 0 rows affected (0.359 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [ex1]> desc aluno;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| matricula | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nome      | varchar(40)  | NO   |     | NULL    |                |
+| cpf       | char(11)     | NO   | UNI | NULL    |                |
+| sexo      | char(1)      | YES  |     | m       |                |
+| curso     | char(3)      | YES  |     | SEG     |                |
+| nota      | decimal(5,2) | YES  |     | 5.00    |                |
+| faltas    | int(11)      | YES  |     | 0       |                |
+| dataNasci | date         | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+8 rows in set (0.032 sec)
+
+MariaDB [ex1]> /*
+   /*> 8
+   /*> */
+MariaDB [ex1]> alter table aluno change nota n1 numeric(5,2) default 5;
+Query OK, 0 rows affected (0.206 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [ex1]> desc aluno;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| matricula | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nome      | varchar(40)  | NO   |     | NULL    |                |
+| cpf       | char(11)     | NO   | UNI | NULL    |                |
+| sexo      | char(1)      | YES  |     | m       |                |
+| curso     | char(3)      | YES  |     | SEG     |                |
+| n1        | decimal(5,2) | YES  |     | 5.00    |                |
+| faltas    | int(11)      | YES  |     | 0       |                |
+| dataNasci | date         | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+8 rows in set (0.029 sec)
+
+MariaDB [ex1]> /*
+   /*> 9 - qual comando troca o nome da tabela para tabaluno
+   /*> */
+MariaDB [ex1]> rename table aluno to tabAluno;
+Query OK, 0 rows affected (0.397 sec)
+
+MariaDB [ex1]> desc aluno;
+ERROR 1146 (42S02): Table 'ex1.aluno' doesn't exist
+MariaDB [ex1]> desc tabaluno;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| matricula | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nome      | varchar(40)  | NO   |     | NULL    |                |
+| cpf       | char(11)     | NO   | UNI | NULL    |                |
+| sexo      | char(1)      | YES  |     | m       |                |
+| curso     | char(3)      | YES  |     | SEG     |                |
+| n1        | decimal(5,2) | YES  |     | 5.00    |                |
+| faltas    | int(11)      | YES  |     | 0       |                |
+| dataNasci | date         | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+8 rows in set (0.127 sec)
+
+MariaDB [ex1]> show tables;
++---------------+
+| Tables_in_ex1 |
++---------------+
+| tabaluno      |
++---------------+
+1 row in set (0.000 sec)
+
+MariaDB [ex1]> drop faltas;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'faltas' at line 1
+MariaDB [ex1]> drop column faltas;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'column faltas' at line 1
+MariaDB [ex1]> alter table tabaluno drop faltas
+    -> ;
+Query OK, 0 rows affected (0.238 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [ex1]> desc tabaluno;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| matricula | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nome      | varchar(40)  | NO   |     | NULL    |                |
+| cpf       | char(11)     | NO   | UNI | NULL    |                |
+| sexo      | char(1)      | YES  |     | m       |                |
+| curso     | char(3)      | YES  |     | SEG     |                |
+| n1        | decimal(5,2) | YES  |     | 5.00    |                |
+| dataNasci | date         | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+7 rows in set (0.112 sec)
+
+MariaDB [ex1]> exit
