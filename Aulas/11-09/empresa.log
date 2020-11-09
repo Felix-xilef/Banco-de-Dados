@@ -1,0 +1,137 @@
+MariaDB [EMPRESA]> /*
+   /*> Qual o nome do funcionario que ganha o menor salario?
+   /*> */
+MariaDB [EMPRESA]> select enome from emp where esal = (selec min(esal) from emp);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'min(esal) from emp)' at line 1
+MariaDB [EMPRESA]> select enome from emp where esal = (select min(esal) from emp);
++--------+
+| enome  |
++--------+
+| MANUEL |
++--------+
+1 row in set (0.119 sec)
+
+MariaDB [EMPRESA]> /*
+   /*> Qual o funcionario que ganha o maior salario?
+   /*> */
+MariaDB [EMPRESA]> select enome from emp where esal = (select max(esal) from emp);
++--------+
+| enome  |
++--------+
+| VALTER |
++--------+
+1 row in set (0.001 sec)
+
+MariaDB [EMPRESA]> */
+    -> /*
+   /*> Qual o depto em que ninguem trabalha?
+   /*> */
+    -> select * from depto where deptno not in (select deptno from emp);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '*/
+
+select * from depto where deptno not in (select deptno from emp)' at line 1
+MariaDB [EMPRESA]> select * from depto where deptno not in (select deptno from emp);
++--------+--------+
+| DEPTNO | DNOME  |
++--------+--------+
+|      1 | VENDAS |
++--------+--------+
+1 row in set (0.154 sec)
+
+MariaDB [EMPRESA]> create table analista(
+    -> empno int primary key,
+    -> enome varchar(30) not null,
+    -> esal decimal(8,2),
+    -> deptno int,
+    -> edatadm date);
+Query OK, 0 rows affected (0.241 sec)
+
+MariaDB [EMPRESA]> desc analista
+    -> ;
++---------+--------------+------+-----+---------+-------+
+| Field   | Type         | Null | Key | Default | Extra |
++---------+--------------+------+-----+---------+-------+
+| empno   | int(11)      | NO   | PRI | NULL    |       |
+| enome   | varchar(30)  | NO   |     | NULL    |       |
+| esal    | decimal(8,2) | YES  |     | NULL    |       |
+| deptno  | int(11)      | YES  |     | NULL    |       |
+| edatadm | date         | YES  |     | NULL    |       |
++---------+--------------+------+-----+---------+-------+
+5 rows in set (0.115 sec)
+
+MariaDB [EMPRESA]> select * from analista;
+Empty set (0.000 sec)
+
+MariaDB [EMPRESA]> insert into analista select empno, enome, esal, dptno, edatamd from emp where efuncao='analista';
+ERROR 1054 (42S22): Unknown column 'dptno' in 'field list'
+MariaDB [EMPRESA]> insert into analista select empno, enome, esal, deptno, edatamd from emp where efuncao='analista';
+ERROR 1054 (42S22): Unknown column 'edatamd' in 'field list'
+MariaDB [EMPRESA]> insert into analista select empno, enome, esal, deptno, edatadm from emp where efuncao='analista';
+Query OK, 2 rows affected (0.122 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [EMPRESA]> select * from analista;
++-------+--------+---------+--------+---------+
+| empno | enome  | esal    | deptno | edatadm |
++-------+--------+---------+--------+---------+
+|     1 | RENATO | 5000.00 |      2 | NULL    |
+|     5 | JULIO  | 3800.00 |      3 | NULL    |
++-------+--------+---------+--------+---------+
+2 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> */
+    -> Mostrar os dados dos empregados que tem telefone
+    -> */
+    -> select * from emp where empno in (select distinct empno from fones_emp);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '*/
+Mostrar os dados dos empregados que tem telefone
+*/
+select * from emp wher...' at line 1
+MariaDB [EMPRESA]> select * from emp where empno in (select distinct empno from fones_emp);
++-------+--------+---------+---------+----------+--------+
+| EMPNO | ENOME  | ESAL    | EDATADM | EFUNCAO  | DEPTNO |
++-------+--------+---------+---------+----------+--------+
+|     1 | RENATO | 5000.00 | NULL    | ANALISTA |      2 |
+|     3 | VALTER | 6000.00 | NULL    | GERENTE  |      3 |
+|     5 | JULIO  | 3800.00 | NULL    | ANALISTA |      3 |
++-------+--------+---------+---------+----------+--------+
+3 rows in set (0.118 sec)
+
+MariaDB [EMPRESA]> /*
+   /*> Mostrar quem nÆo tem telefone
+   /*> */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select * from emp where empno not in (select distinct empno from fones_emp);
++-------+-----------+---------+---------+-------------+--------+
+| EMPNO | ENOME     | ESAL    | EDATADM | EFUNCAO     | DEPTNO |
++-------+-----------+---------+---------+-------------+--------+
+|     2 | MANUEL    | 3500.00 | NULL    | PROGRAMADOR |      2 |
+|     4 | ADALBERTO | 4000.00 | NULL    | GERENTE     |      2 |
++-------+-----------+---------+---------+-------------+--------+
+2 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> /*
+   /*> Qual o nome e salario do empregado que trabalha a mais tempo?
+   /*> */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select enome as maisVelho from emp where edatadm=(select min(edatadm) from emp);
+Empty set (0.001 sec)
+
+MariaDB [EMPRESA]> /*
+   /*> Quais os funcionario que foram admitidos no primeiro dia do mes?
+   /*> */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select * from emp where day(edatadm)=1;
+Empty set (0.107 sec)
+
+MariaDB [EMPRESA]> /*
+   /*> Quem foi admitido na mesma data que o renato?
+   /*> */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select * from emp where edatadm=(select edatadm where enome='Renato');
+Empty set (0.103 sec)
+
+MariaDB [EMPRESA]> select * from emp where edatadm=(select edatadm where enome='Renato') and enome<>'renato';
+Empty set (0.108 sec)
+
+MariaDB [EMPRESA]> exit

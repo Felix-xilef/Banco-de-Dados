@@ -1,0 +1,158 @@
+MariaDB [(none)]> source bdempresa.sql
+Query OK, 1 row affected (0.002 sec)
+
+Database changed
+Query OK, 0 rows affected (0.437 sec)
+
+Query OK, 12 rows affected (0.309 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+MariaDB [BDEMPRESA]> show tables;
++---------------------+
+| Tables_in_bdempresa |
++---------------------+
+| tabempregado        |
++---------------------+
+1 row in set (0.001 sec)
+
+MariaDB [BDEMPRESA]> desc tabempregado;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| NumeroEmp   | int(11)       | NO   | PRI | NULL    |       |
+| NomeEmp     | varchar(30)   | NO   |     | NULL    |       |
+| FuncaoEmp   | varchar(20)   | YES  |     | NULL    |       |
+| DepNume     | int(11)       | NO   |     | NULL    |       |
+| AdmEmp      | date          | NO   |     | NULL    |       |
+| SalarioEmp  | decimal(10,2) | YES  |     | NULL    |       |
+| ComissaoEmp | decimal(10,2) | YES  |     | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+7 rows in set (0.137 sec)
+
+MariaDB [BDEMPRESA]> select * from tabempregado;
++-----------+------------------------+-------------+---------+------------+------------+-------------+
+| NumeroEmp | NomeEmp                | FuncaoEmp   | DepNume | AdmEmp     | SalarioEmp | ComissaoEmp |
++-----------+------------------------+-------------+---------+------------+------------+-------------+
+|       100 | Matheus Fernandes      | balconista  |      10 | 2000-01-01 |    2000.00 |        NULL |
+|       110 | Roberto Cardoso        | vendedor    |      10 | 2001-01-01 |    3000.00 |        0.05 |
+|       120 | Pedro Henrique Cardoso | estoquista  |      10 | 2001-11-01 |    1500.00 |        NULL |
+|       130 | Mariana Menezes        | designer    |      20 | 2010-03-01 |    2500.00 |        NULL |
+|       140 | Ricardo Pereira        | balconista  |      10 | 2005-08-10 |    1600.00 |        NULL |
+|       150 | Deise Paternack        | vendedor    |      20 | 2008-05-01 |    3000.00 |        0.05 |
+|       160 | Catarina Lima          | gerente     |      10 | 2000-01-01 |    6000.00 |        0.10 |
+|       170 | Julio Rodrigues        | estoquista  |      20 | 2000-01-01 |    1500.00 |        NULL |
+|       180 | Fernando Soares        | auxiliar    |      10 | 2018-03-01 |    1100.00 |        NULL |
+|       190 | Edson da Silva         | programador |      10 | 2000-01-01 |    3000.00 |        NULL |
+|       200 | Matheus Fernandes      | programador |      30 | 2000-01-01 |    3000.00 |        NULL |
+|       210 | Ivo Muller             | vendedor    |      20 | 2002-01-20 |    4000.00 |        NULL |
++-----------+------------------------+-------------+---------+------------+------------+-------------+
+12 rows in set (0.128 sec)
+
+MariaDB [BDEMPRESA]> /*
+   /*> Quantos funcionários foram admitidos no ano 2001?
+   /*> */
+
+MariaDB [BDEMPRESA]> select count(AdmEmp) from tabempregado where year(AdmEmp)=2001;
++---------------+
+| count(AdmEmp) |
++---------------+
+|             2 |
++---------------+
+1 row in set (0.000 sec)
+
+MariaDB [BDEMPRESA]> /************************** 2 *******************************/
+
+MariaDB [BDEMPRESA]> /*
+   /*> Quantos funcionários foram contratados por ano?
+   /*> */
+
+
+MariaDB [BDEMPRESA]> select year(admemp), count(*) as total from tabempregado group by year(admemp);
++--------------+-------+
+| year(admemp) | total |
++--------------+-------+
+|         2000 |     5 |
+|         2001 |     2 |
+|         2002 |     1 |
+|         2005 |     1 |
+|         2008 |     1 |
+|         2010 |     1 |
+|         2018 |     1 |
++--------------+-------+
+7 rows in set (0.109 sec)
+
+MariaDB [BDEMPRESA]> /****************************************** 3 *******************************************/
+MariaDB [BDEMPRESA]> /*
+   /*> Qual o tempo de casa de cada funcionario?
+   /*> */
+MariaDB [BDEMPRESA]> 
+MariaDB [BDEMPRESA]> select nomeemp, admemp, timestampdiff(year, admemp, now()) as tempoDeCasa from tabempregado;
++------------------------+------------+-------------+
+| nomeemp                | admemp     | tempoDeCasa |
++------------------------+------------+-------------+
+| Matheus Fernandes      | 2000-01-01 |          20 |
+| Roberto Cardoso        | 2001-01-01 |          19 |
+| Pedro Henrique Cardoso | 2001-11-01 |          19 |
+| Mariana Menezes        | 2010-03-01 |          10 |
+| Ricardo Pereira        | 2005-08-10 |          15 |
+| Deise Paternack        | 2008-05-01 |          12 |
+| Catarina Lima          | 2000-01-01 |          20 |
+| Julio Rodrigues        | 2000-01-01 |          20 |
+| Fernando Soares        | 2018-03-01 |           2 |
+| Edson da Silva         | 2000-01-01 |          20 |
+| Matheus Fernandes      | 2000-01-01 |          20 |
+| Ivo Muller             | 2002-01-20 |          18 |
++------------------------+------------+-------------+
+12 rows in set (0.001 sec)
+
+MariaDB [BDEMPRESA]> /****************************************** 4 ********************************************/
+MariaDB [BDEMPRESA]> /*
+   /*> Qual a media dos salario por ano de admicao?
+   /*> */
+MariaDB [BDEMPRESA]> 
+MariaDB [BDEMPRESA]> select year(admemp), avg(salario) as media from tabempregado group by year(admemp);
+ERROR 1054 (42S22): Unknown column 'salario' in 'field list'
+MariaDB [BDEMPRESA]> select year(admemp), avg(salarioemp) as media from tabempregado group by year(admemp);
++--------------+-------------+
+| year(admemp) | media       |
++--------------+-------------+
+|         2000 | 3100.000000 |
+|         2001 | 2250.000000 |
+|         2002 | 4000.000000 |
+|         2005 | 1600.000000 |
+|         2008 | 3000.000000 |
+|         2010 | 2500.000000 |
+|         2018 | 1100.000000 |
++--------------+-------------+
+7 rows in set (0.126 sec)
+
+MariaDB [BDEMPRESA]> select year(admemp), round(avg(salarioemp), 2) as media from tabempregado group by year(admemp);
++--------------+---------+
+| year(admemp) | media   |
++--------------+---------+
+|         2000 | 3100.00 |
+|         2001 | 2250.00 |
+|         2002 | 4000.00 |
+|         2005 | 1600.00 |
+|         2008 | 3000.00 |
+|         2010 | 2500.00 |
+|         2018 | 1100.00 |
++--------------+---------+
+7 rows in set (0.130 sec)
+
+MariaDB [BDEMPRESA]> select year(admemp) as ano, round(avg(salarioemp), 2) as media from tabempregado group by year(admemp);
++------+---------+
+| ano  | media   |
++------+---------+
+| 2000 | 3100.00 |
+| 2001 | 2250.00 |
+| 2002 | 4000.00 |
+| 2005 | 1600.00 |
+| 2008 | 3000.00 |
+| 2010 | 2500.00 |
+| 2018 | 1100.00 |
++------+---------+
+7 rows in set (0.001 sec)
+
+MariaDB [BDEMPRESA]> /***********************************************************************************************/
+MariaDB [BDEMPRESA]> exit
