@@ -1,0 +1,44 @@
+MariaDB [Consultorio]> source VENDAS.sql
+Query OK, 1 row affected (0.003 sec)
+
+Database changed
+Query OK, 0 rows affected (0.272 sec)
+
+Query OK, 0 rows affected (0.210 sec)
+
+Query OK, 0 rows affected (0.398 sec)
+
+MariaDB [VENDAS]> show tables;
++------------------+
+| Tables_in_vendas |
++------------------+
+| itemnota         |
+| notafiscal       |
+| produto          |
++------------------+
+3 rows in set (0.001 sec)
+
+MariaDB [VENDAS]> select * from produto;
+Empty set (0.002 sec)
+
+MariaDB [VENDAS]> select * from notafiscal;
+Empty set (0.002 sec)
+
+MariaDB [VENDAS]> select * from itemnota;
+Empty set (0.002 sec)
+
+MariaDB [VENDAS]> /* Reunir dados de item nota com notafiscal e produto */
+MariaDB [VENDAS]> 
+MariaDB [VENDAS]> select it.numnota, nf.data, it.codproduto, p.nomeproduto, p.preco, it.quant, p.preco*it.quant as subtotal from itemnota it, notafiscal nf, produto p where it.numnota = nf.numnota and it.codproduto = p.codproduto;
+ERROR 1054 (42S22): Unknown column 'it.numnota' in 'field list'
+MariaDB [VENDAS]> desc itemnota;
++------------+---------------+------+-----+---------+-------+
+| Field      | Type          | Null | Key | Default | Extra |
++------------+---------------+------+-----+---------+-------+
+| NUMERONOTA | decimal(10,0) | NO   | PRI | NULL    |       |
+| CODPRODUTO | int(11)       | NO   | PRI | NULL    |       |
+| QUANT      | int(11)       | NO   |     | NULL    |       |
++------------+---------------+------+-----+---------+-------+
+3 rows in set (0.024 sec)
+
+MariaDB [VENDAS]> quit;

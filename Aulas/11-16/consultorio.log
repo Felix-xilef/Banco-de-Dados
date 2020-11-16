@@ -1,0 +1,262 @@
+MariaDB [(none)]> source CONSULTORIO.sql
+Query OK, 1 row affected (0.006 sec)
+
+Database changed
+Query OK, 0 rows affected (0.342 sec)
+
+Query OK, 0 rows affected (0.412 sec)
+
+Query OK, 0 rows affected (0.718 sec)
+
+Query OK, 0 rows affected (0.232 sec)
+
+Query OK, 0 rows affected (0.577 sec)
+
+Query OK, 3 rows affected (0.307 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+Query OK, 3 rows affected (0.309 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+Query OK, 2 rows affected (0.131 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+Query OK, 2 rows affected (0.154 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+Query OK, 3 rows affected (0.231 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [Consultorio]> tee vendas.log
+MariaDB [consultorio]> select * from convenio
+    -> ;
++---------+--------------+---------+
+| CODCONV | NOMECONVenio | FONECON |
++---------+--------------+---------+
+|       1 | SUL AMERICA  | 6012378 |
+|       2 | SAUDE TOTAL  | 999098  |
+|       3 | GOOD HEALTH  | 776544  |
++---------+--------------+---------+
+3 rows in set (0.000 sec)
+
+MariaDB [consultorio]> select * from paciente;
++------------+----------------+------+------------+---------+---------+
+| IDPACIENTE | NOMEPAC        | SEXO | DATANASC   | FONE    | CODCONV |
++------------+----------------+------+------------+---------+---------+
+|          1 | JOAO DA SILVA  | M    | 1998-10-10 | 5566667 |       1 |
+|          2 | VERA RODRIGUES | F    | 1992-08-10 | 5543211 |       2 |
+|          3 | PAULO RANGEL   | M    | 1990-04-12 | 8874662 |       3 |
++------------+----------------+------+------------+---------+---------+
+3 rows in set (0.000 sec)
+
+MariaDB [consultorio]> select * from especialidade;
++----------+---------------+
+| CODESPEC | NOMEESPEC     |
++----------+---------------+
+|        1 | CLINICA GERAL |
+|        2 | ORTOPEDIA     |
++----------+---------------+
+2 rows in set (0.001 sec)
+
+MariaDB [consultorio]> select * from medico;
++----------+---------+------+-------+----------+
+| IDMEDICO | NOMEMED | sexo | CRM   | CODESPEC |
++----------+---------+------+-------+----------+
+|        1 | PAULO   | M    | 50345 |        1 |
+|        2 | MARINA  | F    | 12345 |        2 |
++----------+---------+------+-------+----------+
+2 rows in set (0.000 sec)
+
+MariaDB [consultorio]> select * from consulta;
++------------+----------+------------+----------------+------------+
+| IDPACIENTE | IDMEDICO | DATACONS   | QUEIXA         | PRESCRICAO |
++------------+----------+------------+----------------+------------+
+|          1 |        1 | 2020-11-16 | DOR DE CABECA  | ANALGESICO |
+|          1 |        2 | 2020-11-16 | DOR NAS COSTAS | RAIO X     |
+|          2 |        1 | 2020-11-16 | AZIA           | OMEPRAZOL  |
++------------+----------+------------+----------------+------------+
+3 rows in set (0.001 sec)
+
+MariaDB [consultorio]> show tables;
++-----------------------+
+| Tables_in_consultorio |
++-----------------------+
+| consulta              |
+| convenio              |
+| especialidade         |
+| medico                |
+| paciente              |
++-----------------------+
+5 rows in set (0.001 sec)
+
+MariaDB [consultorio]> /* view que une dados de paciente com convenio */
+MariaDB [consultorio]> 
+MariaDB [consultorio]> create view v_pac as select * from paciente, convenio where paciente.idconvenio = convenio.idconvenio;
+ERROR 1054 (42S22): Unknown column 'paciente.idconvenio' in 'where clause'
+MariaDB [consultorio]> 
+MariaDB [consultorio]> select idpaciente as id, nome as paciente, sexo as sexoPaciente, datanasc, fone, nomeconv as convenio from paciente, convenio where paciente.idconvenio = convenio.idconvenio;
+ERROR 1054 (42S22): Unknown column 'nome' in 'field list'
+MariaDB [consultorio]> select idpaciente as id, nomepac as paciente, sexo as sexoPaciente, datanasc, fone, nomeconv as convenio from paciente, convenio where paciente.idconvenio = convenio.idconvenio;
+ERROR 1054 (42S22): Unknown column 'nomeconv' in 'field list'
+MariaDB [consultorio]> select idpaciente as id, nomepac as paciente, sexo as sexoPaciente, datanasc, fone, nomeconvenio as convenio from paciente, convenio where paciente.idconvenio = convenio.idconvenio;
+ERROR 1054 (42S22): Unknown column 'paciente.idconvenio' in 'where clause'
+MariaDB [consultorio]> select idpaciente as id, nomepac as paciente, sexo as sexoPaciente, datanasc, fone, nomeconvenio as convenio from paciente, convenio where paciente.codconv = convenio.idconvenio;
+ERROR 1054 (42S22): Unknown column 'convenio.idconvenio' in 'where clause'
+MariaDB [consultorio]> select idpaciente as id, nomepac as paciente, sexo as sexoPaciente, datanasc, fone, nomeconvenio as convenio from paciente, convenio where paciente.codconv = convenio.codconv;
++----+----------------+--------------+------------+---------+-------------+
+| id | paciente       | sexoPaciente | datanasc   | fone    | convenio    |
++----+----------------+--------------+------------+---------+-------------+
+|  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
+|  2 | VERA RODRIGUES | F            | 1992-08-10 | 5543211 | SAUDE TOTAL |
+|  3 | PAULO RANGEL   | M            | 1990-04-12 | 8874662 | GOOD HEALTH |
++----+----------------+--------------+------------+---------+-------------+
+3 rows in set (0.000 sec)
+
+MariaDB [consultorio]> create view v_pac select idpaciente as id, nomepac as paciente, sexo as sexoPaciente, datanasc, fone, nomeconvenio as convenio from paciente, convenio where paciente.codconv = convenio.codconv;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'select idpaciente as id, nomepac as paciente, sexo as sexoPaciente, datanasc,...' at line 1
+MariaDB [consultorio]> create view v_pac as select idpaciente as id, nomepac as paciente, sexo as sexoPaciente, datanasc, fone, nomeconvenio as convenio from paciente, convenio where paciente.codconv = convenio.codconv;
+Query OK, 0 rows affected (0.172 sec)
+
+MariaDB [consultorio]> select * from v_pac;
++----+----------------+--------------+------------+---------+-------------+
+| id | paciente       | sexoPaciente | datanasc   | fone    | convenio    |
++----+----------------+--------------+------------+---------+-------------+
+|  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
+|  2 | VERA RODRIGUES | F            | 1992-08-10 | 5543211 | SAUDE TOTAL |
+|  3 | PAULO RANGEL   | M            | 1990-04-12 | 8874662 | GOOD HEALTH |
++----+----------------+--------------+------------+---------+-------------+
+3 rows in set (0.001 sec)
+
+MariaDB [consultorio]> /* Juntar m‚dico com especialidade */
+MariaDB [consultorio]> 
+MariaDB [consultorio]> select * from medico;
++----------+---------+------+-------+----------+
+| IDMEDICO | NOMEMED | sexo | CRM   | CODESPEC |
++----------+---------+------+-------+----------+
+|        1 | PAULO   | M    | 50345 |        1 |
+|        2 | MARINA  | F    | 12345 |        2 |
++----------+---------+------+-------+----------+
+2 rows in set (0.000 sec)
+
+MariaDB [consultorio]> select * from especialidade;
++----------+---------------+
+| CODESPEC | NOMEESPEC     |
++----------+---------------+
+|        1 | CLINICA GERAL |
+|        2 | ORTOPEDIA     |
++----------+---------------+
+2 rows in set (0.000 sec)
+
+MariaDB [consultorio]> create view v_med as select idmedico, nomemed as medico, crm, nomeespec as especialidade from medico, especialidade where medico.codespec = especialidade.codespec;
+Query OK, 0 rows affected (0.132 sec)
+
+MariaDB [consultorio]> show tables;
++-----------------------+
+| Tables_in_consultorio |
++-----------------------+
+| consulta              |
+| convenio              |
+| especialidade         |
+| medico                |
+| paciente              |
+| v_med                 |
+| v_pac                 |
++-----------------------+
+7 rows in set (0.001 sec)
+
+MariaDB [consultorio]> select * from v_med;
++----------+--------+-------+---------------+
+| idmedico | medico | crm   | especialidade |
++----------+--------+-------+---------------+
+|        1 | PAULO  | 50345 | CLINICA GERAL |
+|        2 | MARINA | 12345 | ORTOPEDIA     |
++----------+--------+-------+---------------+
+2 rows in set (0.001 sec)
+
+MariaDB [consultorio]> select * from consulta c, v_med m, v_pac p where c.idmedico = m.idmedico and c.idpaciente = p.id;
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+| IDPACIENTE | IDMEDICO | DATACONS   | QUEIXA         | PRESCRICAO | idmedico | medico | crm   | especialidade | id | paciente       | sexoPaciente | datanasc   | fone    | convenio    |
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+|          1 |        1 | 2020-11-16 | DOR DE CABECA  | ANALGESICO |        1 | PAULO  | 50345 | CLINICA GERAL |  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
+|          2 |        1 | 2020-11-16 | AZIA           | OMEPRAZOL  |        1 | PAULO  | 50345 | CLINICA GERAL |  2 | VERA RODRIGUES | F            | 1992-08-10 | 5543211 | SAUDE TOTAL |
+|          1 |        2 | 2020-11-16 | DOR NAS COSTAS | RAIO X     |        2 | MARINA | 12345 | ORTOPEDIA     |  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+3 rows in set (0.121 sec)
+
+MariaDB [consultorio]> select * from consulta c, v_med m, v_pac p where c.idmedico = m.idmedico and c.idpaciente = p.id;
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+| IDPACIENTE | IDMEDICO | DATACONS   | QUEIXA         | PRESCRICAO | idmedico | medico | crm   | especialidade | id | paciente       | sexoPaciente | datanasc   | fone    | convenio    |
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+|          1 |        1 | 2020-11-16 | DOR DE CABECA  | ANALGESICO |        1 | PAULO  | 50345 | CLINICA GERAL |  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
+|          2 |        1 | 2020-11-16 | AZIA           | OMEPRAZOL  |        1 | PAULO  | 50345 | CLINICA GERAL |  2 | VERA RODRIGUES | F            | 1992-08-10 | 5543211 | SAUDE TOTAL |
+|          1 |        2 | 2020-11-16 | DOR NAS COSTAS | RAIO X     |        2 | MARINA | 12345 | ORTOPEDIA     |  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+3 rows in set (0.001 sec)
+
+MariaDB [consultorio]> select * from consulta c, v_med m, v_pac p where c.idmedico = m.idmedico and c.idpaciente = p.id;
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+| IDPACIENTE | IDMEDICO | DATACONS   | QUEIXA         | PRESCRICAO | idmedico | medico | crm   | especialidade | id | paciente       | sexoPaciente | datanasc   | fone    | convenio    |
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+|          1 |        1 | 2020-11-16 | DOR DE CABECA  | ANALGESICO |        1 | PAULO  | 50345 | CLINICA GERAL |  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
+|          2 |        1 | 2020-11-16 | AZIA           | OMEPRAZOL  |        1 | PAULO  | 50345 | CLINICA GERAL |  2 | VERA RODRIGUES | F            | 1992-08-10 | 5543211 | SAUDE TOTAL |
+|          1 |        2 | 2020-11-16 | DOR NAS COSTAS | RAIO X     |        2 | MARINA | 12345 | ORTOPEDIA     |  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+3 rows in set (0.001 sec)
+
+MariaDB [consultorio]> select * from consulta c, v_med m, v_pac p where c.idmedico = m.idmedico and c.idpaciente = p.id;
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+| IDPACIENTE | IDMEDICO | DATACONS   | QUEIXA         | PRESCRICAO | idmedico | medico | crm   | especialidade | id | paciente       | sexoPaciente | datanasc   | fone    | convenio    |
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+|          1 |        1 | 2020-11-16 | DOR DE CABECA  | ANALGESICO |        1 | PAULO  | 50345 | CLINICA GERAL |  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
+|          2 |        1 | 2020-11-16 | AZIA           | OMEPRAZOL  |        1 | PAULO  | 50345 | CLINICA GERAL |  2 | VERA RODRIGUES | F            | 1992-08-10 | 5543211 | SAUDE TOTAL |
+|          1 |        2 | 2020-11-16 | DOR NAS COSTAS | RAIO X     |        2 | MARINA | 12345 | ORTOPEDIA     |  1 | JOAO DA SILVA  | M            | 1998-10-10 | 5566667 | SUL AMERICA |
++------------+----------+------------+----------------+------------+----------+--------+-------+---------------+----+----------------+--------------+------------+---------+-------------+
+3 rows in set (0.001 sec)
+
+MariaDB [consultorio]> create view v_tudo
+    -> select * from consulta c, v_med m, v_pac p where c.idmedico = m.idmedico and c.idpaciente = p.id;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'select * from consulta c, v_med m, v_pac p where c.idmedico = m.idmedico and ...' at line 2
+MariaDB [consultorio]> create view v_tudo as select * from consulta c, v_med m, v_pac p where c.idmedico = m.idmedico and c.idpaciente = p.id;
+ERROR 1060 (42S21): Duplicate column name 'idmedico'
+MariaDB [consultorio]> create view v_tudo as select c.idpaciente, p.paciente, p.convenio, c.idmedico, m.medico, m.especialidade, c.data, c.queixa, c.prescricao from consulta c, v_med m, v_pac p where c.idmedico = m.idmedico and c.idpaciente = p.id;
+ERROR 1054 (42S22): Unknown column 'c.data' in 'field list'
+MariaDB [consultorio]> select * from consulta;
++------------+----------+------------+----------------+------------+
+| IDPACIENTE | IDMEDICO | DATACONS   | QUEIXA         | PRESCRICAO |
++------------+----------+------------+----------------+------------+
+|          1 |        1 | 2020-11-16 | DOR DE CABECA  | ANALGESICO |
+|          1 |        2 | 2020-11-16 | DOR NAS COSTAS | RAIO X     |
+|          2 |        1 | 2020-11-16 | AZIA           | OMEPRAZOL  |
++------------+----------+------------+----------------+------------+
+3 rows in set (0.000 sec)
+
+MariaDB [consultorio]> create view v_tudo as select c.idpaciente, p.paciente, p.convenio, c.idmedico, m.medico, m.especialidade, c.datacons, c.queixa, c.prescricao from consulta c, v_med m, v_pac p where c.idmedico = m.idmedico and c.idpaciente = p.id;
+Query OK, 0 rows affected (0.169 sec)
+
+MariaDB [consultorio]> select * from v_tudo
+    -> ;
++------------+----------------+-------------+----------+--------+---------------+------------+----------------+------------+
+| idpaciente | paciente       | convenio    | idmedico | medico | especialidade | datacons   | queixa         | prescricao |
++------------+----------------+-------------+----------+--------+---------------+------------+----------------+------------+
+|          1 | JOAO DA SILVA  | SUL AMERICA |        1 | PAULO  | CLINICA GERAL | 2020-11-16 | DOR DE CABECA  | ANALGESICO |
+|          2 | VERA RODRIGUES | SAUDE TOTAL |        1 | PAULO  | CLINICA GERAL | 2020-11-16 | AZIA           | OMEPRAZOL  |
+|          1 | JOAO DA SILVA  | SUL AMERICA |        2 | MARINA | ORTOPEDIA     | 2020-11-16 | DOR NAS COSTAS | RAIO X     |
++------------+----------------+-------------+----------+--------+---------------+------------+----------------+------------+
+3 rows in set (0.001 sec)
+
+MariaDB [consultorio]> show tables;
++-----------------------+
+| Tables_in_consultorio |
++-----------------------+
+| consulta              |
+| convenio              |
+| especialidade         |
+| medico                |
+| paciente              |
+| v_med                 |
+| v_pac                 |
+| v_tudo                |
++-----------------------+
+8 rows in set (0.001 sec)
+
+MariaDB [consultorio]> quit

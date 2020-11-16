@@ -1,0 +1,448 @@
+MariaDB [(none)]> source EMPRESA.sql;
+Query OK, 1 row affected (0.002 sec)
+
+Database changed
+Query OK, 0 rows affected (0.364 sec)
+
+Query OK, 0 rows affected (0.210 sec)
+
+Query OK, 0 rows affected (0.177 sec)
+
+Query OK, 3 rows affected (0.065 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+Query OK, 5 rows affected (0.099 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+Query OK, 5 rows affected (0.408 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
++--------+---------+
+| DEPTNO | DNOME   |
++--------+---------+
+|      1 | VENDAS  |
+|      2 | COMPRAS |
+|      3 | RH      |
++--------+---------+
+3 rows in set (0.000 sec)
+
++-------+-----------+---------+---------+-------------+--------+
+| EMPNO | ENOME     | ESAL    | EDATADM | EFUNCAO     | DEPTNO |
++-------+-----------+---------+---------+-------------+--------+
+|     1 | RENATO    | 5000.00 | NULL    | ANALISTA    |      2 |
+|     2 | MANUEL    | 3500.00 | NULL    | PROGRAMADOR |      2 |
+|     3 | VALTER    | 6000.00 | NULL    | GERENTE     |      3 |
+|     4 | ADALBERTO | 4000.00 | NULL    | GERENTE     |      2 |
+|     5 | JULIO     | 3800.00 | NULL    | ANALISTA    |      3 |
++-------+-----------+---------+---------+-------------+--------+
+5 rows in set (0.000 sec)
+
++-------+-----------+
+| EMPNO | EFONE     |
++-------+-----------+
+|     1 | 44430000  |
+|     1 | 997766554 |
+|     3 | 44430000  |
+|     3 | 987654321 |
+|     5 | 912345678 |
++-------+-----------+
+5 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> insert into emp values(6, 'Carlos', 4500, '2015-10-10', 'Programador', NULL);
+Query OK, 1 row affected (0.147 sec)
+
+MariaDB [EMPRESA]> select * from emp;
++-------+-----------+---------+------------+-------------+--------+
+| EMPNO | ENOME     | ESAL    | EDATADM    | EFUNCAO     | DEPTNO |
++-------+-----------+---------+------------+-------------+--------+
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    |      2 |
+|     2 | MANUEL    | 3500.00 | NULL       | PROGRAMADOR |      2 |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     |      3 |
+|     4 | ADALBERTO | 4000.00 | NULL       | GERENTE     |      2 |
+|     5 | JULIO     | 3800.00 | NULL       | ANALISTA    |      3 |
+|     6 | Carlos    | 4500.00 | 2015-10-10 | Programador |   NULL |
++-------+-----------+---------+------------+-------------+--------+
+6 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> /* Mostrar os empregados com o nome dos seus respectivos departamentos */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select empno, enome, esal, edataadm, efuncao, dnome from emp, depto where emp.deptno = depto.deptno;
+ERROR 1054 (42S22): Unknown column 'edataadm' in 'field list'
+MariaDB [EMPRESA]> select empno, enome, esal, edatadm, efuncao, dnome from emp, depto where emp.deptno = depto.deptno;
++-------+-----------+---------+---------+-------------+---------+
+| empno | enome     | esal    | edatadm | efuncao     | dnome   |
++-------+-----------+---------+---------+-------------+---------+
+|     1 | RENATO    | 5000.00 | NULL    | ANALISTA    | COMPRAS |
+|     2 | MANUEL    | 3500.00 | NULL    | PROGRAMADOR | COMPRAS |
+|     3 | VALTER    | 6000.00 | NULL    | GERENTE     | RH      |
+|     4 | ADALBERTO | 4000.00 | NULL    | GERENTE     | COMPRAS |
+|     5 | JULIO     | 3800.00 | NULL    | ANALISTA    | RH      |
++-------+-----------+---------+---------+-------------+---------+
+5 rows in set (0.143 sec)
+
+MariaDB [EMPRESA]> select empno, enome, esal, edatadm, efuncao, dnome from emp e, depto d where e.deptno = d.deptno;
++-------+-----------+---------+---------+-------------+---------+
+| empno | enome     | esal    | edatadm | efuncao     | dnome   |
++-------+-----------+---------+---------+-------------+---------+
+|     1 | RENATO    | 5000.00 | NULL    | ANALISTA    | COMPRAS |
+|     2 | MANUEL    | 3500.00 | NULL    | PROGRAMADOR | COMPRAS |
+|     3 | VALTER    | 6000.00 | NULL    | GERENTE     | RH      |
+|     4 | ADALBERTO | 4000.00 | NULL    | GERENTE     | COMPRAS |
+|     5 | JULIO     | 3800.00 | NULL    | ANALISTA    | RH      |
++-------+-----------+---------+---------+-------------+---------+
+5 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> select empno, enome, esal, edatadm, efuncao, dnome from emp e join depto d on e.deptno = d.deptno;
++-------+-----------+---------+---------+-------------+---------+
+| empno | enome     | esal    | edatadm | efuncao     | dnome   |
++-------+-----------+---------+---------+-------------+---------+
+|     1 | RENATO    | 5000.00 | NULL    | ANALISTA    | COMPRAS |
+|     2 | MANUEL    | 3500.00 | NULL    | PROGRAMADOR | COMPRAS |
+|     3 | VALTER    | 6000.00 | NULL    | GERENTE     | RH      |
+|     4 | ADALBERTO | 4000.00 | NULL    | GERENTE     | COMPRAS |
+|     5 | JULIO     | 3800.00 | NULL    | ANALISTA    | RH      |
++-------+-----------+---------+---------+-------------+---------+
+5 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> /* Mostrar todos os funcion rios, mesmo os que nÆo tem depto */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select empno, enome, esal, edatadm, efuncao, dnome from emp e left join depto d on e.deptno = d.deptno;
++-------+-----------+---------+------------+-------------+---------+
+| empno | enome     | esal    | edatadm    | efuncao     | dnome   |
++-------+-----------+---------+------------+-------------+---------+
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    | COMPRAS |
+|     2 | MANUEL    | 3500.00 | NULL       | PROGRAMADOR | COMPRAS |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     | RH      |
+|     4 | ADALBERTO | 4000.00 | NULL       | GERENTE     | COMPRAS |
+|     5 | JULIO     | 3800.00 | NULL       | ANALISTA    | RH      |
+|     6 | Carlos    | 4500.00 | 2015-10-10 | Programador | NULL    |
++-------+-----------+---------+------------+-------------+---------+
+6 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> /* Mostrar todos os depto, mesmo que nÆo tenha funcionarios */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select empno, enome, esal, edatadm, efuncao, dnome from emp e right join depto d on e.deptno = d.deptno;
++-------+-----------+---------+---------+-------------+---------+
+| empno | enome     | esal    | edatadm | efuncao     | dnome   |
++-------+-----------+---------+---------+-------------+---------+
+|  NULL | NULL      |    NULL | NULL    | NULL        | VENDAS  |
+|     1 | RENATO    | 5000.00 | NULL    | ANALISTA    | COMPRAS |
+|     2 | MANUEL    | 3500.00 | NULL    | PROGRAMADOR | COMPRAS |
+|     4 | ADALBERTO | 4000.00 | NULL    | GERENTE     | COMPRAS |
+|     3 | VALTER    | 6000.00 | NULL    | GERENTE     | RH      |
+|     5 | JULIO     | 3800.00 | NULL    | ANALISTA    | RH      |
++-------+-----------+---------+---------+-------------+---------+
+6 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> /* Mostrar nome, funcao e telefone dos empregados que tem telefone */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select enome, efuncao, efone from emp e, fones_emp f where e.empno = f.empno;
++--------+----------+-----------+
+| enome  | efuncao  | efone     |
++--------+----------+-----------+
+| RENATO | ANALISTA | 44430000  |
+| RENATO | ANALISTA | 997766554 |
+| VALTER | GERENTE  | 44430000  |
+| VALTER | GERENTE  | 987654321 |
+| JULIO  | ANALISTA | 912345678 |
++--------+----------+-----------+
+5 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> select * from emp e, fone_emp f where e.empno = f.empno;
+ERROR 1146 (42S02): Table 'empresa.fone_emp' doesn't exist
+MariaDB [EMPRESA]> select * from emp e, fones_emp f where e.empno = f.empno;
++-------+--------+---------+---------+----------+--------+-------+-----------+
+| EMPNO | ENOME  | ESAL    | EDATADM | EFUNCAO  | DEPTNO | EMPNO | EFONE     |
++-------+--------+---------+---------+----------+--------+-------+-----------+
+|     1 | RENATO | 5000.00 | NULL    | ANALISTA |      2 |     1 | 44430000  |
+|     1 | RENATO | 5000.00 | NULL    | ANALISTA |      2 |     1 | 997766554 |
+|     3 | VALTER | 6000.00 | NULL    | GERENTE  |      3 |     3 | 44430000  |
+|     3 | VALTER | 6000.00 | NULL    | GERENTE  |      3 |     3 | 987654321 |
+|     5 | JULIO  | 3800.00 | NULL    | ANALISTA |      3 |     5 | 912345678 |
++-------+--------+---------+---------+----------+--------+-------+-----------+
+5 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> /* Ver todos os dados dos empregados mesmo que nao tenha telefone */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select * from emp e left join fones_emp f on e.empno = f.empno;
++-------+-----------+---------+------------+-------------+--------+-------+-----------+
+| EMPNO | ENOME     | ESAL    | EDATADM    | EFUNCAO     | DEPTNO | EMPNO | EFONE     |
++-------+-----------+---------+------------+-------------+--------+-------+-----------+
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    |      2 |     1 | 44430000  |
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    |      2 |     1 | 997766554 |
+|     2 | MANUEL    | 3500.00 | NULL       | PROGRAMADOR |      2 |  NULL | NULL      |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     |      3 |     3 | 44430000  |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     |      3 |     3 | 987654321 |
+|     4 | ADALBERTO | 4000.00 | NULL       | GERENTE     |      2 |  NULL | NULL      |
+|     5 | JULIO     | 3800.00 | NULL       | ANALISTA    |      3 |     5 | 912345678 |
+|     6 | Carlos    | 4500.00 | 2015-10-10 | Programador |   NULL |  NULL | NULL      |
++-------+-----------+---------+------------+-------------+--------+-------+-----------+
+8 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> select e.empno, e.nome, e.esal, e.edatadm, e.funcao, e.deptno, f.efone from emp e left join fones_emp f on e.empno = f.empno;
+ERROR 1054 (42S22): Unknown column 'e.nome' in 'field list'
+MariaDB [EMPRESA]> select e.empno, e.enome, e.esal, e.edatadm, e.funcao, e.deptno, f.efone from emp e left join fones_emp f on e.empno = f.empno;
+ERROR 1054 (42S22): Unknown column 'e.funcao' in 'field list'
+MariaDB [EMPRESA]> select e.empno, e.enome, e.esal, e.edatadm, e.efuncao, e.deptno, f.efone from emp e left join fones_emp f on e.empno = f.empno;
++-------+-----------+---------+------------+-------------+--------+-----------+
+| empno | enome     | esal    | edatadm    | efuncao     | deptno | efone     |
++-------+-----------+---------+------------+-------------+--------+-----------+
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    |      2 | 44430000  |
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    |      2 | 997766554 |
+|     2 | MANUEL    | 3500.00 | NULL       | PROGRAMADOR |      2 | NULL      |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     |      3 | 44430000  |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     |      3 | 987654321 |
+|     4 | ADALBERTO | 4000.00 | NULL       | GERENTE     |      2 | NULL      |
+|     5 | JULIO     | 3800.00 | NULL       | ANALISTA    |      3 | 912345678 |
+|     6 | Carlos    | 4500.00 | 2015-10-10 | Programador |   NULL | NULL      |
++-------+-----------+---------+------------+-------------+--------+-----------+
+8 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> create view emp_fone as
+    -> select e.empno, e.enome, e.esal, e.edatadm, e.efuncao, e.deptno, f.efone from emp e left join fones_emp f on e.empno = f.empno;
+Query OK, 0 rows affected (0.162 sec)
+
+MariaDB [EMPRESA]> show tables;
++-------------------+
+| Tables_in_empresa |
++-------------------+
+| depto             |
+| emp               |
+| emp_fone          |
+| fones_emp         |
++-------------------+
+4 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> select * from emp_fone;
++-------+-----------+---------+------------+-------------+--------+-----------+
+| empno | enome     | esal    | edatadm    | efuncao     | deptno | efone     |
++-------+-----------+---------+------------+-------------+--------+-----------+
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    |      2 | 44430000  |
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    |      2 | 997766554 |
+|     2 | MANUEL    | 3500.00 | NULL       | PROGRAMADOR |      2 | NULL      |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     |      3 | 44430000  |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     |      3 | 987654321 |
+|     4 | ADALBERTO | 4000.00 | NULL       | GERENTE     |      2 | NULL      |
+|     5 | JULIO     | 3800.00 | NULL       | ANALISTA    |      3 | 912345678 |
+|     6 | Carlos    | 4500.00 | 2015-10-10 | Programador |   NULL | NULL      |
++-------+-----------+---------+------------+-------------+--------+-----------+
+8 rows in set (0.106 sec)
+
+MariaDB [EMPRESA]> /* A partir da view emp_fone mostrar o nome dos empregados que nÆo tem telefone */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select enome from emp_fone where efone is null;
++-----------+
+| enome     |
++-----------+
+| MANUEL    |
+| ADALBERTO |
+| Carlos    |
++-----------+
+3 rows in set (0.108 sec)
+
+MariaDB [EMPRESA]> /* Quantos telefones tem cada emp */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select enome count(efone) as fones from emp_fone group by enome;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'count(efone) as fones from emp_fone group by enome' at line 1
+MariaDB [EMPRESA]> select enome, count(efone) as fones from emp_fone group by enome;
++-----------+-------+
+| enome     | fones |
++-----------+-------+
+| ADALBERTO |     0 |
+| Carlos    |     0 |
+| JULIO     |     1 |
+| MANUEL    |     0 |
+| RENATO    |     2 |
+| VALTER    |     2 |
++-----------+-------+
+6 rows in set (0.129 sec)
+
+MariaDB [EMPRESA]> select e.empno, enome, esal, edatadm, efuncao, dnome, efone from emp e, depto d, fones_emp f where e.deptno = d.deptno and e.empno = f.empno;
++-------+--------+---------+---------+----------+---------+-----------+
+| empno | enome  | esal    | edatadm | efuncao  | dnome   | efone     |
++-------+--------+---------+---------+----------+---------+-----------+
+|     1 | RENATO | 5000.00 | NULL    | ANALISTA | COMPRAS | 44430000  |
+|     1 | RENATO | 5000.00 | NULL    | ANALISTA | COMPRAS | 997766554 |
+|     3 | VALTER | 6000.00 | NULL    | GERENTE  | RH      | 44430000  |
+|     3 | VALTER | 6000.00 | NULL    | GERENTE  | RH      | 987654321 |
+|     5 | JULIO  | 3800.00 | NULL    | ANALISTA | RH      | 912345678 |
++-------+--------+---------+---------+----------+---------+-----------+
+5 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> select e.empno, enome, esal, edatadm, efuncao, dnome, efone from emp e, depto d, fones_emp f where e.deptno = d.deptno and e.empno = f.empno;
++-------+--------+---------+---------+----------+---------+-----------+
+| empno | enome  | esal    | edatadm | efuncao  | dnome   | efone     |
++-------+--------+---------+---------+----------+---------+-----------+
+|     1 | RENATO | 5000.00 | NULL    | ANALISTA | COMPRAS | 44430000  |
+|     1 | RENATO | 5000.00 | NULL    | ANALISTA | COMPRAS | 997766554 |
+|     3 | VALTER | 6000.00 | NULL    | GERENTE  | RH      | 44430000  |
+|     3 | VALTER | 6000.00 | NULL    | GERENTE  | RH      | 987654321 |
+|     5 | JULIO  | 3800.00 | NULL    | ANALISTA | RH      | 912345678 |
++-------+--------+---------+---------+----------+---------+-----------+
+5 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> /* Reunindo as 3 tabelas com join */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select e.empno, enome, esal, edatadm, efuncao, dnome, efone from emp e join depto d on e.deptno = d.deptno join fones_emp f on e.empno = f.empno;
++-------+--------+---------+---------+----------+---------+-----------+
+| empno | enome  | esal    | edatadm | efuncao  | dnome   | efone     |
++-------+--------+---------+---------+----------+---------+-----------+
+|     1 | RENATO | 5000.00 | NULL    | ANALISTA | COMPRAS | 44430000  |
+|     1 | RENATO | 5000.00 | NULL    | ANALISTA | COMPRAS | 997766554 |
+|     3 | VALTER | 6000.00 | NULL    | GERENTE  | RH      | 44430000  |
+|     3 | VALTER | 6000.00 | NULL    | GERENTE  | RH      | 987654321 |
+|     5 | JULIO  | 3800.00 | NULL    | ANALISTA | RH      | 912345678 |
++-------+--------+---------+---------+----------+---------+-----------+
+5 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> select e.empno, enome, esal, edatadm, efuncao, dnome, efone from emp e left join depto d on e.deptno = d.deptno left join fones_emp f on e.empno = f.empno;
++-------+-----------+---------+------------+-------------+---------+-----------+
+| empno | enome     | esal    | edatadm    | efuncao     | dnome   | efone     |
++-------+-----------+---------+------------+-------------+---------+-----------+
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    | COMPRAS | 44430000  |
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    | COMPRAS | 997766554 |
+|     2 | MANUEL    | 3500.00 | NULL       | PROGRAMADOR | COMPRAS | NULL      |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     | RH      | 44430000  |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     | RH      | 987654321 |
+|     4 | ADALBERTO | 4000.00 | NULL       | GERENTE     | COMPRAS | NULL      |
+|     5 | JULIO     | 3800.00 | NULL       | ANALISTA    | RH      | 912345678 |
+|     6 | Carlos    | 4500.00 | 2015-10-10 | Programador | NULL    | NULL      |
++-------+-----------+---------+------------+-------------+---------+-----------+
+8 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> create view v_tudo as
+    -> select e.empno, enome, esal, edatadm, efuncao, dnome, efone from emp e left join depto d on e.deptno = d.deptno left join fones_emp f on e.empno = f.empno;
+Query OK, 0 rows affected (0.117 sec)
+
+MariaDB [EMPRESA]> select * from v_tudo;
++-------+-----------+---------+------------+-------------+---------+-----------+
+| empno | enome     | esal    | edatadm    | efuncao     | dnome   | efone     |
++-------+-----------+---------+------------+-------------+---------+-----------+
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    | COMPRAS | 44430000  |
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    | COMPRAS | 997766554 |
+|     2 | MANUEL    | 3500.00 | NULL       | PROGRAMADOR | COMPRAS | NULL      |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     | RH      | 44430000  |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     | RH      | 987654321 |
+|     4 | ADALBERTO | 4000.00 | NULL       | GERENTE     | COMPRAS | NULL      |
+|     5 | JULIO     | 3800.00 | NULL       | ANALISTA    | RH      | 912345678 |
+|     6 | Carlos    | 4500.00 | 2015-10-10 | Programador | NULL    | NULL      |
++-------+-----------+---------+------------+-------------+---------+-----------+
+8 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> /* Quantos funcionarios trabalham em compras */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select count(*) as total from v_tudo where dnome='COMPRAS';
++-------+
+| total |
++-------+
+|     4 |
++-------+
+1 row in set (0.001 sec)
+
+MariaDB [EMPRESA]> select count(distinct empno) as total from v_tudo where dnome='COMPRAS';
++-------+
+| total |
++-------+
+|     3 |
++-------+
+1 row in set (0.001 sec)
+
+MariaDB [EMPRESA]> /* Qual o nome do gerente de compras */
+MariaDB [EMPRESA]> 
+MariaDB [EMPRESA]> select enome from v_tudo where efuncao = 'GERENTE' and dnome = 'COMPRAS';
++-----------+
+| enome     |
++-----------+
+| ADALBERTO |
++-----------+
+1 row in set (0.001 sec)
+
+MariaDB [EMPRESA]> desc v_tudo;
++---------+--------------+------+-----+---------+-------+
+| Field   | Type         | Null | Key | Default | Extra |
++---------+--------------+------+-----+---------+-------+
+| empno   | int(11)      | NO   |     | 0       |       |
+| enome   | varchar(40)  | NO   |     | NULL    |       |
+| esal    | decimal(6,2) | NO   |     | NULL    |       |
+| edatadm | date         | YES  |     | NULL    |       |
+| efuncao | char(12)     | NO   |     | NULL    |       |
+| dnome   | varchar(20)  | YES  |     | NULL    |       |
+| efone   | char(12)     | YES  |     | NULL    |       |
++---------+--------------+------+-----+---------+-------+
+7 rows in set (0.115 sec)
+
+MariaDB [EMPRESA]> desc emp_fone;
++---------+--------------+------+-----+---------+-------+
+| Field   | Type         | Null | Key | Default | Extra |
++---------+--------------+------+-----+---------+-------+
+| empno   | int(11)      | NO   |     | 0       |       |
+| enome   | varchar(40)  | NO   |     | NULL    |       |
+| esal    | decimal(6,2) | NO   |     | NULL    |       |
+| edatadm | date         | YES  |     | NULL    |       |
+| efuncao | char(12)     | NO   |     | NULL    |       |
+| deptno  | int(11)      | YES  |     | NULL    |       |
+| efone   | char(12)     | YES  |     | NULL    |       |
++---------+--------------+------+-----+---------+-------+
+7 rows in set (0.023 sec)
+
+MariaDB [EMPRESA]> desc emp;
++---------+--------------+------+-----+---------+----------------+
+| Field   | Type         | Null | Key | Default | Extra          |
++---------+--------------+------+-----+---------+----------------+
+| EMPNO   | int(11)      | NO   | PRI | NULL    | auto_increment |
+| ENOME   | varchar(40)  | NO   |     | NULL    |                |
+| ESAL    | decimal(6,2) | NO   |     | NULL    |                |
+| EDATADM | date         | YES  |     | NULL    |                |
+| EFUNCAO | char(12)     | NO   |     | NULL    |                |
+| DEPTNO  | int(11)      | YES  | MUL | NULL    |                |
++---------+--------------+------+-----+---------+----------------+
+6 rows in set (0.019 sec)
+
+MariaDB [EMPRESA]> desc fones_emp;
++-------+----------+------+-----+---------+-------+
+| Field | Type     | Null | Key | Default | Extra |
++-------+----------+------+-----+---------+-------+
+| EMPNO | int(11)  | NO   | PRI | NULL    |       |
+| EFONE | char(12) | NO   | PRI | NULL    |       |
++-------+----------+------+-----+---------+-------+
+2 rows in set (0.019 sec)
+
+MariaDB [EMPRESA]> desc depto;
++--------+-------------+------+-----+---------+----------------+
+| Field  | Type        | Null | Key | Default | Extra          |
++--------+-------------+------+-----+---------+----------------+
+| DEPTNO | int(11)     | NO   | PRI | NULL    | auto_increment |
+| DNOME  | varchar(20) | NO   |     | NULL    |                |
++--------+-------------+------+-----+---------+----------------+
+2 rows in set (0.024 sec)
+
+MariaDB [EMPRESA]> show tables;
++-------------------+
+| Tables_in_empresa |
++-------------------+
+| depto             |
+| emp               |
+| emp_fone          |
+| fones_emp         |
+| v_tudo            |
++-------------------+
+5 rows in set (0.001 sec)
+
+MariaDB [EMPRESA]> rename view emp_fone to v_emp_fone;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'view emp_fone to v_emp_fone' at line 1
+MariaDB [EMPRESA]> rename table emp_fone to v_emp_fone;
+Query OK, 0 rows affected (0.126 sec)
+
+MariaDB [EMPRESA]> show tables;
++-------------------+
+| Tables_in_empresa |
++-------------------+
+| depto             |
+| emp               |
+| fones_emp         |
+| v_emp_fone        |
+| v_tudo            |
++-------------------+
+5 rows in set (0.000 sec)
+
+MariaDB [EMPRESA]> quit

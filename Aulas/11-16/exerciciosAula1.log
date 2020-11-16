@@ -1,0 +1,61 @@
+MariaDB [empresa]> tee exerciciosAula1.sql;
+MariaDB [empresa]> source exerciciosAula1.sql;
+Database changed
+Query OK, 0 rows affected (0.226 sec)
+
++-------+-----------+---------+----------+-----------+--------+---------+
+| empno | enome     | esal    | edatadm  | tempoCasa | deptno | dnome   |
++-------+-----------+---------+----------+-----------+--------+---------+
+|     1 | RENATO    | 5000.00 | NULL     |      NULL |      2 | COMPRAS |
+|     2 | MANUEL    | 3500.00 | NULL     |      NULL |      2 | COMPRAS |
+|     3 | VALTER    | 6000.00 | NULL     |      NULL |      3 | RH      |
+|     4 | ADALBERTO | 4000.00 | NULL     |      NULL |      2 | COMPRAS |
+|     5 | JULIO     | 3800.00 | NULL     |      NULL |      3 | RH      |
+|     6 | Carlos    | 4500.00 | 10/10/15 |         5 |   NULL | NULL    |
++-------+-----------+---------+----------+-----------+--------+---------+
+6 rows in set (0.004 sec)
+
+Query OK, 0 rows affected (0.117 sec)
+
++-----------+-------------+
+| enome     | qtdTelefone |
++-----------+-------------+
+| RENATO    |           2 |
+| MANUEL    |           0 |
+| VALTER    |           2 |
+| ADALBERTO |           0 |
+| JULIO     |           1 |
+| Carlos    |           0 |
++-----------+-------------+
+6 rows in set (0.004 sec)
+
+Query OK, 0 rows affected (0.087 sec)
+
++-------+-----------+---------+------------+-------------+--------+-----------------+
+| EMPNO | ENOME     | ESAL    | EDATADM    | EFUNCAO     | DEPTNO | salarioReajuste |
++-------+-----------+---------+------------+-------------+--------+-----------------+
+|     1 | RENATO    | 5000.00 | NULL       | ANALISTA    |      2 |         5500.00 |
+|     2 | MANUEL    | 3500.00 | NULL       | PROGRAMADOR |      2 |         3850.00 |
+|     3 | VALTER    | 6000.00 | NULL       | GERENTE     |      3 |         6600.00 |
+|     4 | ADALBERTO | 4000.00 | NULL       | GERENTE     |      2 |         4400.00 |
+|     5 | JULIO     | 3800.00 | NULL       | ANALISTA    |      3 |         4180.00 |
+|     6 | Carlos    | 4500.00 | 2015-10-10 | Programador |   NULL |         4950.00 |
++-------+-----------+---------+------------+-------------+--------+-----------------+
+6 rows in set (0.001 sec)
+
++-------------------+
+| Tables_in_empresa |
++-------------------+
+| depto             |
+| emp               |
+| fones_emp         |
+| v1                |
+| v2                |
+| v3                |
+| v_emp_fone        |
+| v_tudo            |
++-------------------+
+8 rows in set (0.001 sec)
+
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'MariaDB [empresa]> tee exerciciosAula1.log' at line 1
+MariaDB [empresa]> quit
