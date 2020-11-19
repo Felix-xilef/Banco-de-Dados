@@ -6,7 +6,7 @@ create table Hospede (
     cpf char(11) primary key,
     rg char(10) unique not null,
     nome varchar(50) not null,
-    dataNasc data,
+    dataNasc date,
     endereco varchar(70)
 );
 
@@ -42,16 +42,46 @@ create table Hospedagem (
     dataEntrada date,
     cpfHospede char(11) not null,
     dataSaida date check(timestampdiff(day, dataEntrada, dataSaida) >= 0),
-    valorDiaria decimal(5.2) not null check(valor >= 0),
+    valorDiaria decimal(5.2) not null check(valorDiaria >= 0),
+    codHospedagem int not null unique auto_increment,
     primary key(numeroQuarto, dataEntrada),
     foreign key(numeroQuarto) references Quarto(numero),
     foreign key(cpfHospede) references Hospede(cpf)
 );
 
 create table Solicitacao (
-    
+    codHospedagem int,
+    dataHora datetime,
+    codSolicitacao int not null unique auto_increment,
+    nomeSolicitante varchar(50) not null,
+    primary key(codHospedagem, dataHora),
+    foreign key(codHospedagem) references Hospedagem(codHospedagem)
 );
 
 create table Consumo (
+    codHospedagem int,
+    dataHora datetime,
+    codConsumo int not null unique auto_increment,
+    nomeSolicitante varchar(50) not null,
+    primary key(codHospedagem, dataHora),
+    foreign key(codHospedagem) references Hospedagem(codHospedagem)
+);
 
+create table SolicitacaoServico (
+    codSolicitacao int,
+    codServico int,
+    quantidade int not null default 1,
+    dataRealizacao date,
+    primary key(codSolicitacao, codServico),
+    foreign key(codSolicitacao) references Solicitacao(codSolicitacao),
+    foreign key(codServico) references Servico(codServico)
+);
+
+create table ConsumoProduto (
+    codConsumo int,
+    codProduto int,
+    quantidade int not null default 1,
+    primary key(codConsumo, codProduto),
+    foreign key(codConsumo) references Consumo(codConsumo),
+    foreign key(codProduto) references ProdutoFrigobar(codProduto)
 );
