@@ -1,0 +1,466 @@
+MariaDB [(none)]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| aula1              |
+| aulaconcessionaria |
+| bdempresa          |
+| consultorio        |
+| empresa            |
+| escola             |
+| ex1                |
+| fatec              |
+| hoteldb            |
+| information_schema |
+| locadora           |
+| mysql              |
+| performance_schema |
+| phpmyadmin         |
+| test               |
+| testambiente       |
+| vendas             |
++--------------------+
+17 rows in set (0.420 sec)
+
+MariaDB [(none)]> use escola
+Database changed
+MariaDB [escola]> show tables;
++------------------+
+| Tables_in_escola |
++------------------+
+| aluno            |
++------------------+
+1 row in set (0.000 sec)
+
+MariaDB [escola]> /*Exemplo de procedures*/
+MariaDB [escola]> 
+MariaDB [escola]> create procedure buscasexo (in s char(1))
+    -> select * from aluno where sexo = s;
+Query OK, 0 rows affected (0.309 sec)
+
+MariaDB [escola]> /* Para chamar uma procedure usa-se o comando call */
+MariaDB [escola]> 
+MariaDB [escola]> call buscasexo('f');
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso       | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+|         5 | Tania     | Clemente  | f    | 2002-11-15 | artes       |  5.00 |  7.50 |
+|         6 | Carmen    | Clemente  | f    | 2001-04-01 | mecanica    |  5.00 |  6.50 |
+|         8 | Vera      | Sampaio   | f    | 2000-05-20 | informatica | 10.00 |  9.00 |
+|        10 | Elen      | Menezes   | f    | 2001-12-25 | artes       |  8.00 |  8.00 |
+|        11 | Vera      | NULL      | f    | 2000-10-26 | ADS         |  5.70 | 10.00 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+5 rows in set (0.275 sec)
+
+Query OK, 0 rows affected (0.300 sec)
+
+MariaDB [escola]> call buscasexo('m');
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso       | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+|         1 | Carlos    | Santos    | m    | 2000-10-10 | informatica |  5.00 |  0.00 |
+|         2 | Pedro     | Siqueira  | m    | 2002-08-10 | mecanica    |  5.00 |  0.00 |
+|         3 | Antonio   | Cardoso   | m    | 2002-10-08 | informatica |  5.00 |  0.00 |
+|         7 | Paulo     | Ribeiro   | m    | 2000-02-15 | mecanica    |  7.00 |  8.50 |
+|         9 | Leonardo  | Santos    | m    | 2001-09-07 | mecanica    |  5.00 |  3.50 |
+|        12 | Rodrigo   | NULL      | m    | 1997-10-01 | JOG         |  9.75 |  7.50 |
+|        13 | Mario     | NULL      | m    | 1899-01-30 | JOG         |  8.50 |  8.00 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+7 rows in set (0.000 sec)
+
+Query OK, 0 rows affected (0.019 sec)
+
+MariaDB [escola]> call buscasexo('x');
+Empty set (0.000 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [escola]> /* Procedure mais complexa */
+MariaDB [escola]> 
+MariaDB [escola]> delimiter $
+MariaDB [escola]> create procedure buscasexo1(in s char(1))
+    -> begin
+    -> declare conta integer;
+    -> declare mensa varchar(100);
+    -> set conta=(select count(*) from aluno where sexo = s);
+    -> if (conta=0) then
+    -> begin
+    -> set mensa=concat('Nao ha alunos com o sexo "', s, '"');
+    -> select mensa;
+    -> end;
+    -> else
+    -> select * from aluno where sexo = s;
+    -> end if
+    -> end $
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'end' at line 14
+MariaDB [escola]> create procedure buscasexo1(in s char(1))
+    -> begin
+    -> declare conta integer;
+    -> declare mensa varchar(100);
+    -> set conta=(select count(*) from aluno where sexo = s);
+    -> if (conta=0) then
+    -> begin
+    -> set mensa=concat('Nao ha alunos com o sexo "', s, '"');
+    -> select mensa;
+    -> end;
+    -> else
+    -> select * from aluno where sexo = s;
+    -> end if
+    -> end$
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'end' at line 14
+MariaDB [escola]> delimiter;
+    -> 
+    -> ;
+    -> $
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'delimiter' at line 1
+MariaDB [escola]> ;
+    -> $
+ERROR 1065 (42000): Query was empty
+MariaDB [escola]> delimiter ;
+MariaDB [escola]> ;
+ERROR: No query specified
+
+MariaDB [escola]> $
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '$' at line 1
+MariaDB [escola]> /* Cria uma procedure que mostra os alunos com nota1 e nota2 >= 5 */
+MariaDB [escola]> 
+MariaDB [escola]> create procedure buscanota(in n1 numeric(5,2), n2 numeric(5,2))
+    -> select * from aluno where nota1>n1 and nota2>n2;
+Query OK, 0 rows affected (0.191 sec)
+
+MariaDB [escola]> cal buscasexo1('f')
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'cal buscasexo1('f')' at line 1
+MariaDB [escola]> cal buscanota(5,5);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'cal buscanota(5,5)' at line 1
+MariaDB [escola]> cal buscanota(5, 5);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'cal buscanota(5, 5)' at line 1
+MariaDB [escola]> alter procedure buscanota (in n1 numeric(5,2), n2 numeric(5,2))
+    -> select * from aluno where nota1 >= n1 and nota2 >= n2;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(in n1 numeric(5,2), n2 numeric(5,2))
+select * from aluno where nota1 >= n1 a...' at line 1
+MariaDB [escola]> drop procedure buscanota;
+Query OK, 0 rows affected (0.117 sec)
+
+MariaDB [escola]> create procedure buscanota (in n1 numeric(5,2), n2 numeric(5,2))
+    -> select * from aluno where nota1>=n1 and nota2>=n2;
+Query OK, 0 rows affected (0.215 sec)
+
+MariaDB [escola]> call buscanota(5,5);
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso       | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+|         5 | Tania     | Clemente  | f    | 2002-11-15 | artes       |  5.00 |  7.50 |
+|         6 | Carmen    | Clemente  | f    | 2001-04-01 | mecanica    |  5.00 |  6.50 |
+|         7 | Paulo     | Ribeiro   | m    | 2000-02-15 | mecanica    |  7.00 |  8.50 |
+|         8 | Vera      | Sampaio   | f    | 2000-05-20 | informatica | 10.00 |  9.00 |
+|        10 | Elen      | Menezes   | f    | 2001-12-25 | artes       |  8.00 |  8.00 |
+|        11 | Vera      | NULL      | f    | 2000-10-26 | ADS         |  5.70 | 10.00 |
+|        12 | Rodrigo   | NULL      | m    | 1997-10-01 | JOG         |  9.75 |  7.50 |
+|        13 | Mario     | NULL      | m    | 1899-01-30 | JOG         |  8.50 |  8.00 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+8 rows in set (0.001 sec)
+
+Query OK, 0 rows affected (0.024 sec)
+
+MariaDB [escola]> call buscasexo1('f');
+ERROR 1305 (42000): PROCEDURE escola.buscasexo1 does not exist
+MariaDB [escola]> select concat(nome, ' ', sobrenome) as nome, round((nota1+nota2)/2, 2) as media from aluno where media >= 6;
+ERROR 1054 (42S22): Unknown column 'nome' in 'field list'
+MariaDB [escola]> update aluno set sobrenome='Silva' where matricula between 4 and 6;
+Query OK, 2 rows affected (0.175 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+MariaDB [escola]> select concat(nome, ' ', sobrenome) as nome, round((nota1+nota2)/2, 2) as media from aluno where media >= 6;
+ERROR 1054 (42S22): Unknown column 'nome' in 'field list'
+MariaDB [escola]> select concat(nomealuno, ' ', sobrenome) as nome, round((nota1+nota2)/2, 2) as media from aluno where media >= 6;
+ERROR 1054 (42S22): Unknown column 'media' in 'where clause'
+MariaDB [escola]> select concat(nomealuno, ' ', sobrenome) as nome, round((nota1+nota2)/2, 2) as media from aluno where (nota1+nota2)/2 >= 6;
++---------------+-------+
+| nome          | media |
++---------------+-------+
+| Tania Silva   |  6.25 |
+| Paulo Ribeiro |  7.75 |
+| Vera Sampaio  |  9.50 |
+| Elen Menezes  |  8.00 |
+| NULL          |  7.85 |
+| NULL          |  8.63 |
+| NULL          |  8.25 |
++---------------+-------+
+7 rows in set (0.001 sec)
+
+MariaDB [escola]> update aluno set sobrenome='Silva' where matricula>11;
+Query OK, 2 rows affected (0.124 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+MariaDB [escola]> select concat(nomealuno, ' ', sobrenome) as nome, round((nota1+nota2)/2, 2) as media from aluno where (nota1+nota2)/2 >= 6;
++---------------+-------+
+| nome          | media |
++---------------+-------+
+| Tania Silva   |  6.25 |
+| Paulo Ribeiro |  7.75 |
+| Vera Sampaio  |  9.50 |
+| Elen Menezes  |  8.00 |
+| NULL          |  7.85 |
+| Rodrigo Silva |  8.63 |
+| Mario Silva   |  8.25 |
++---------------+-------+
+7 rows in set (0.000 sec)
+
+MariaDB [escola]> update aluno set sobrenome='Machado' where matricula=11;
+Query OK, 1 row affected (0.072 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [escola]> select concat(nomealuno, ' ', sobrenome) as nome, round((nota1+nota2)/2, 2) as media from aluno where (nota1+nota2)/2 >= 6;
++---------------+-------+
+| nome          | media |
++---------------+-------+
+| Tania Silva   |  6.25 |
+| Paulo Ribeiro |  7.75 |
+| Vera Sampaio  |  9.50 |
+| Elen Menezes  |  8.00 |
+| Vera Machado  |  7.85 |
+| Rodrigo Silva |  8.63 |
+| Mario Silva   |  8.25 |
++---------------+-------+
+7 rows in set (0.001 sec)
+
+MariaDB [escola]> /* Procedure com parametro de saida */
+MariaDB [escola]> 
+MariaDB [escola]> create procedure buscamedia(in m numeric(5,2), out x integer)
+    -> set x = (select count(*) from aluno where (nota1+nota2)/2 <= m);
+Query OK, 0 rows affected (0.195 sec)
+
+MariaDB [escola]> call buscamedia(6, @a);
+Query OK, 0 rows affected (0.031 sec)
+
+MariaDB [escola]> select @a;
++------+
+| @a   |
++------+
+|    5 |
++------+
+1 row in set (0.000 sec)
+
+MariaDB [escola]> drop procedure buscamedia;
+Query OK, 0 rows affected (0.192 sec)
+
+MariaDB [escola]> delimiter #
+MariaDB [escola]> 
+MariaDB [escola]> create procedure buscamedia(in m numeric(5,2), out x integer)
+    -> begin
+    -> 	select * from aluno where (nota1+nota2)/2 <=m;
+    -> 	set x = (select count(*) from aluno where (nota1+nota2)/2 <= m);
+    -> end#
+Query OK, 0 rows affected (0.215 sec)
+
+MariaDB [escola]> delimiter ;
+MariaDB [escola]> 
+MariaDB [escola]> call buscamedia(6, @a);
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso       | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+|         1 | Carlos    | Santos    | m    | 2000-10-10 | informatica |  5.00 |  0.00 |
+|         2 | Pedro     | Siqueira  | m    | 2002-08-10 | mecanica    |  5.00 |  0.00 |
+|         3 | Antonio   | Cardoso   | m    | 2002-10-08 | informatica |  5.00 |  0.00 |
+|         6 | Carmen    | Silva     | f    | 2001-04-01 | mecanica    |  5.00 |  6.50 |
+|         9 | Leonardo  | Santos    | m    | 2001-09-07 | mecanica    |  5.00 |  3.50 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+5 rows in set (0.001 sec)
+
+Query OK, 0 rows affected (0.016 sec)
+
+MariaDB [escola]> select @a;
++------+
+| @a   |
++------+
+|    5 |
++------+
+1 row in set (0.000 sec)
+
+MariaDB [escola]> select @a as total;
++-------+
+| total |
++-------+
+|     5 |
++-------+
+1 row in set (0.000 sec)
+
+MariaDB [escola]> call buscamedia(8, @t);
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso       | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+|         1 | Carlos    | Santos    | m    | 2000-10-10 | informatica |  5.00 |  0.00 |
+|         2 | Pedro     | Siqueira  | m    | 2002-08-10 | mecanica    |  5.00 |  0.00 |
+|         3 | Antonio   | Cardoso   | m    | 2002-10-08 | informatica |  5.00 |  0.00 |
+|         5 | Tania     | Silva     | f    | 2002-11-15 | artes       |  5.00 |  7.50 |
+|         6 | Carmen    | Silva     | f    | 2001-04-01 | mecanica    |  5.00 |  6.50 |
+|         7 | Paulo     | Ribeiro   | m    | 2000-02-15 | mecanica    |  7.00 |  8.50 |
+|         9 | Leonardo  | Santos    | m    | 2001-09-07 | mecanica    |  5.00 |  3.50 |
+|        10 | Elen      | Menezes   | f    | 2001-12-25 | artes       |  8.00 |  8.00 |
+|        11 | Vera      | Machado   | f    | 2000-10-26 | ADS         |  5.70 | 10.00 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+9 rows in set (0.000 sec)
+
+Query OK, 0 rows affected (0.026 sec)
+
+MariaDB [escola]> select @t as total;
++-------+
+| total |
++-------+
+|     9 |
++-------+
+1 row in set (0.000 sec)
+
+MariaDB [escola]> create view alunos_view as select concat(nomealuno, ' ', sobrenome) as nome, nota1, nota2, round((nota1+nota2)/2, 1) as media, curso from aluno order by nome;
+Query OK, 0 rows affected (0.213 sec)
+
+MariaDB [escola]> show tables;
++------------------+
+| Tables_in_escola |
++------------------+
+| aluno            |
+| alunos_view      |
++------------------+
+2 rows in set (0.001 sec)
+
+MariaDB [escola]> select * form aluno_view;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'form aluno_view' at line 1
+MariaDB [escola]> select * from aluno_view;
+ERROR 1146 (42S02): Table 'escola.aluno_view' doesn't exist
+MariaDB [escola]> select * from alunos_view;
++-----------------+-------+-------+-------+-------------+
+| nome            | nota1 | nota2 | media | curso       |
++-----------------+-------+-------+-------+-------------+
+| Antonio Cardoso |  5.00 |  0.00 |   2.5 | informatica |
+| Carlos Santos   |  5.00 |  0.00 |   2.5 | informatica |
+| Carmen Silva    |  5.00 |  6.50 |   5.8 | mecanica    |
+| Elen Menezes    |  8.00 |  8.00 |   8.0 | artes       |
+| Leonardo Santos |  5.00 |  3.50 |   4.3 | mecanica    |
+| Mario Silva     |  8.50 |  8.00 |   8.3 | JOG         |
+| Paulo Ribeiro   |  7.00 |  8.50 |   7.8 | mecanica    |
+| Pedro Siqueira  |  5.00 |  0.00 |   2.5 | mecanica    |
+| Rodrigo Silva   |  9.75 |  7.50 |   8.6 | JOG         |
+| Tania Silva     |  5.00 |  7.50 |   6.3 | artes       |
+| Vera Machado    |  5.70 | 10.00 |   7.9 | ADS         |
+| Vera Sampaio    | 10.00 |  9.00 |   9.5 | informatica |
++-----------------+-------+-------+-------+-------------+
+12 rows in set (0.101 sec)
+
+MariaDB [escola]> /* Criar procedure que mostre os alunos de um determinado curso com media >= a um valor */
+MariaDB [escola]> 
+MariaDB [escola]> source procedureView.sql;
+Query OK, 0 rows affected (0.232 sec)
+
+MariaDB [escola]> drop cursomedia;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'cursomedia' at line 1
+MariaDB [escola]> drop procedure cursomedia;
+Query OK, 0 rows affected (0.190 sec)
+
+MariaDB [escola]> source procedureView.sql;
+Query OK, 0 rows affected (0.260 sec)
+
+MariaDB [escola]> call cursomedia('artes', 4, @t);
++--------------+-------+-------+-------+-------+
+| nome         | nota1 | nota2 | media | curso |
++--------------+-------+-------+-------+-------+
+| Elen Menezes |  8.00 |  8.00 |   8.0 | artes |
+| Tania Silva  |  5.00 |  7.50 |   6.3 | artes |
++--------------+-------+-------+-------+-------+
+2 rows in set (0.001 sec)
+
+Query OK, 0 rows affected (0.005 sec)
+
+MariaDB [escola]> select @t as total;
++-------+
+| total |
++-------+
+|     2 |
++-------+
+1 row in set (0.000 sec)
+
+MariaDB [escola]> desc aluno;
++-----------+---------------+------+-----+---------+----------------+
+| Field     | Type          | Null | Key | Default | Extra          |
++-----------+---------------+------+-----+---------+----------------+
+| matricula | int(11)       | NO   | PRI | NULL    | auto_increment |
+| nomealuno | varchar(30)   | NO   |     | NULL    |                |
+| sobrenome | varchar(20)   | YES  |     | NULL    |                |
+| sexo      | enum('f','m') | YES  |     | f       |                |
+| datanasc  | date          | YES  |     | NULL    |                |
+| curso     | varchar(20)   | YES  |     | NULL    |                |
+| nota1     | decimal(5,2)  | YES  |     | 5.00    |                |
+| nota2     | decimal(5,2)  | YES  |     | 0.00    |                |
++-----------+---------------+------+-----+---------+----------------+
+8 rows in set (0.203 sec)
+
+MariaDB [escola]> /* como saber as procedures criadas */
+MariaDB [escola]> select name from mysql.proc where type='procedure' and db='escola';
++------------+
+| name       |
++------------+
+| buscamedia |
+| buscanota  |
+| buscasexo  |
+| cursomedia |
++------------+
+4 rows in set (0.107 sec)
+
+MariaDB [escola]> show create procedure cursomedia;
++------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+--------------------+
+| Procedure  | sql_mode                                            | Create Procedure                                                                                                                                                                                                                                                 | character_set_client | collation_connection | Database Collation |
++------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+--------------------+
+| cursomedia | NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION | CREATE DEFINER=`root`@`localhost` PROCEDURE `cursomedia`(in c varchar(15), m numeric(5,2), out x integer)
+begin
+    select * from alunos_view where curso = c and media >= m;
+    set x = (select count(*) from alunos_view where curso = c and media >= m);
+end | utf8mb4              | utf8mb4_general_ci   | utf8mb4_general_ci |
++------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+--------------------+
+1 row in set (0.000 sec)
+
+MariaDB [escola]> create view show_proc as
+    -> select name from mysql.proc where type='procedure' and db='escola';
+Query OK, 0 rows affected (0.129 sec)
+
+MariaDB [escola]> show tables;
++------------------+
+| Tables_in_escola |
++------------------+
+| aluno            |
+| alunos_view      |
+| show_proc        |
++------------------+
+3 rows in set (0.001 sec)
+
+MariaDB [escola]> select * from show_proc;
++------------+
+| name       |
++------------+
+| buscamedia |
+| buscanota  |
+| buscasexo  |
+| cursomedia |
++------------+
+4 rows in set (0.001 sec)
+
+MariaDB [escola]> select * from aluno;
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso       | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+|         1 | Carlos    | Santos    | m    | 2000-10-10 | informatica |  5.00 |  0.00 |
+|         2 | Pedro     | Siqueira  | m    | 2002-08-10 | mecanica    |  5.00 |  0.00 |
+|         3 | Antonio   | Cardoso   | m    | 2002-10-08 | informatica |  5.00 |  0.00 |
+|         5 | Tania     | Silva     | f    | 2002-11-15 | artes       |  5.00 |  7.50 |
+|         6 | Carmen    | Silva     | f    | 2001-04-01 | mecanica    |  5.00 |  6.50 |
+|         7 | Paulo     | Ribeiro   | m    | 2000-02-15 | mecanica    |  7.00 |  8.50 |
+|         8 | Vera      | Sampaio   | f    | 2000-05-20 | informatica | 10.00 |  9.00 |
+|         9 | Leonardo  | Santos    | m    | 2001-09-07 | mecanica    |  5.00 |  3.50 |
+|        10 | Elen      | Menezes   | f    | 2001-12-25 | artes       |  8.00 |  8.00 |
+|        11 | Vera      | Machado   | f    | 2000-10-26 | ADS         |  5.70 | 10.00 |
+|        12 | Rodrigo   | Silva     | m    | 1997-10-01 | JOG         |  9.75 |  7.50 |
+|        13 | Mario     | Silva     | m    | 1899-01-30 | JOG         |  8.50 |  8.00 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+12 rows in set (0.000 sec)
+
+MariaDB [escola]> tee exercicios.log

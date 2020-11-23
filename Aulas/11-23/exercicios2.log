@@ -1,0 +1,97 @@
+MariaDB [vendas]> truncate table itemnota
+    -> ;
+Query OK, 0 rows affected (0.440 sec)
+
+MariaDB [vendas]> select * from itemnota;
+Empty set (0.000 sec)
+
+MariaDB [vendas]> alter table produto add estoque int default 100;
+Query OK, 0 rows affected (0.251 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [vendas]> select * from produto
+    -> ;
+Empty set (0.000 sec)
+
+MariaDB [vendas]> insert into produto values
+    -> (default, 'pao', 6.80, 100),
+    -> (default, 'bis', 3.99, 100);
+ERROR 1062 (23000): Duplicate entry '0' for key 'PRIMARY'
+MariaDB [vendas]> desc produto;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| CODPRODUTO  | int(11)      | NO   | PRI | NULL    |       |
+| NOMEPRODUTO | varchar(20)  | NO   |     | NULL    |       |
+| PRECO       | decimal(8,2) | YES  |     | 10.00   |       |
+| estoque     | int(11)      | YES  |     | 100     |       |
++-------------+--------------+------+-----+---------+-------+
+4 rows in set (0.026 sec)
+
+MariaDB [vendas]> insert into produto (nomeproduto, preco, estoque) values
+    -> ('bis', 3.99, 100);
+Query OK, 1 row affected, 1 warning (0.128 sec)
+
+MariaDB [vendas]> insert into produto (nomeproduto, preco, estoque) values
+    -> ('pao', 6.80, 100),
+    -> ('agua', 1.5, 100),
+    -> ('leite', 2.45, 100);
+ERROR 1062 (23000): Duplicate entry '0' for key 'PRIMARY'
+MariaDB [vendas]> insert into produto (nomeproduto, preco, estoque) values
+    -> ('pao', 6.80, 100),
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 2
+MariaDB [vendas]> insert into produto (nomeproduto, preco, estoque) values
+    -> ('pao', 6.80, 100);
+ERROR 1062 (23000): Duplicate entry '0' for key 'PRIMARY'
+MariaDB [vendas]> insert into produto values
+    -> (1, 'pao', 6.80, 100),
+    -> (2, 'agua', 1.5, 100),
+    -> (3, 'leite', 2.45, 100);
+Query OK, 3 rows affected (0.128 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [vendas]> select * from produto
+    -> ;
++------------+-------------+-------+---------+
+| CODPRODUTO | NOMEPRODUTO | PRECO | estoque |
++------------+-------------+-------+---------+
+|          0 | bis         |  3.99 |     100 |
+|          1 | pao         |  6.80 |     100 |
+|          2 | agua        |  1.50 |     100 |
+|          3 | leite       |  2.45 |     100 |
++------------+-------------+-------+---------+
+4 rows in set (0.000 sec)
+
+MariaDB [vendas]> source exercicios2.sql
+ERROR 1054 (42S22): Unknown column 'numnota' in 'NEW'
+ERROR 1054 (42S22): Unknown column 'numnota' in 'OLD'
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'update notafiscal set valor=valor + (p) where numnota=old.numnota;
+end' at line 13
+MariaDB [vendas]> desc itemnota;
++------------+---------------+------+-----+---------+-------+
+| Field      | Type          | Null | Key | Default | Extra |
++------------+---------------+------+-----+---------+-------+
+| NUMERONOTA | decimal(10,0) | NO   | PRI | NULL    |       |
+| CODPRODUTO | int(11)       | NO   | PRI | NULL    |       |
+| QUANT      | int(11)       | NO   |     | NULL    |       |
++------------+---------------+------+-----+---------+-------+
+3 rows in set (0.027 sec)
+
+MariaDB [vendas]> source exercicios2.sql
+Query OK, 0 rows affected (0.132 sec)
+
+Query OK, 0 rows affected (0.101 sec)
+
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'update notafiscal set valor=valor+p where numnota=new.numeronota;
+end' at line 13
+MariaDB [vendas]> source exercicios2.sql
+ERROR 1054 (42S22): Unknown column 'produto' in 'OLD'
+MariaDB [vendas]> source exercicios2.sql
+ERROR 1054 (42S22): Unknown column 'produto' in 'OLD'
+MariaDB [vendas]> source exercicios2.sql
+ERROR 1054 (42S22): Unknown column 'produto' in 'OLD'
+MariaDB [vendas]> source exercicios2.sql
+Query OK, 0 rows affected (0.170 sec)
+
+MariaDB [vendas]> 

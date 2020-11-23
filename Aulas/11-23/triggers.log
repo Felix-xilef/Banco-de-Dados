@@ -1,0 +1,333 @@
+MariaDB [escola]> source triggers.sql
+Query OK, 1 row affected (0.025 sec)
+
+Database changed
+Query OK, 0 rows affected (0.736 sec)
+
+Query OK, 0 rows affected (0.339 sec)
+
+Query OK, 0 rows affected (0.177 sec)
+
+Query OK, 0 rows affected (0.104 sec)
+
+Query OK, 0 rows affected (0.217 sec)
+
+MariaDB [testetrigger]> show tables;
++------------------------+
+| Tables_in_testetrigger |
++------------------------+
+| tabfun                 |
+| tablog                 |
++------------------------+
+2 rows in set (0.001 sec)
+
+MariaDB [testetrigger]> select * from tabfun;
+Empty set (0.002 sec)
+
+MariaDB [testetrigger]> select * from tablog;
+Empty set (0.002 sec)
+
+MariaDB [testetrigger]> desc tabfun;
++---------+---------------+------+-----+---------+----------------+
+| Field   | Type          | Null | Key | Default | Extra          |
++---------+---------------+------+-----+---------+----------------+
+| IDFUN   | int(11)       | NO   | PRI | NULL    | auto_increment |
+| NOMEFUN | varchar(40)   | NO   |     | NULL    |                |
+| CPF     | decimal(12,0) | YES  |     | NULL    |                |
+| DATAADM | date          | YES  |     | NULL    |                |
+| SALARIO | decimal(10,2) | YES  |     | NULL    |                |
++---------+---------------+------+-----+---------+----------------+
+5 rows in set (0.025 sec)
+
+MariaDB [testetrigger]> insert into tabfun(nomefun, cpf, dataadm, salario) values
+    -> ('Valter', 1111, '2007-07-07', 3000), ('Paulo', 2222, '2010-12-01', 4000);
+Query OK, 2 rows affected (0.277 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [testetrigger]> select * from tabfun;
++-------+---------+------+------------+---------+
+| IDFUN | NOMEFUN | CPF  | DATAADM    | SALARIO |
++-------+---------+------+------------+---------+
+|     1 | Valter  | 1111 | 2007-07-07 | 3000.00 |
+|     2 | Paulo   | 2222 | 2010-12-01 | 4000.00 |
++-------+---------+------+------------+---------+
+2 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> select * from tablog;
++------+----------------+---------+------------+----------+
+| ID   | USUARIO        | ACAO    | DATA       | HORA     |
++------+----------------+---------+------------+----------+
+|    1 | root@localhost | INSERIU | 2020-11-23 | 11:18:50 |
+|    2 | root@localhost | INSERIU | 2020-11-23 | 11:18:50 |
++------+----------------+---------+------------+----------+
+2 rows in set (0.001 sec)
+
+MariaDB [testetrigger]> insert into tabfun(nomefun, cpf, dataadm, salario) values
+    -> ('Ricardo', 3333, '2000-10-10', 3800);
+Query OK, 1 row affected (0.129 sec)
+
+MariaDB [testetrigger]> select * from tablog;
++------+----------------+---------+------------+----------+
+| ID   | USUARIO        | ACAO    | DATA       | HORA     |
++------+----------------+---------+------------+----------+
+|    1 | root@localhost | INSERIU | 2020-11-23 | 11:18:50 |
+|    2 | root@localhost | INSERIU | 2020-11-23 | 11:18:50 |
+|    3 | root@localhost | INSERIU | 2020-11-23 | 11:20:44 |
++------+----------------+---------+------------+----------+
+3 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> update tabfun set salario = salario*1.1;
+Query OK, 3 rows affected (0.104 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+MariaDB [testetrigger]> select * from tablog;
++------+----------------+---------+------------+----------+
+| ID   | USUARIO        | ACAO    | DATA       | HORA     |
++------+----------------+---------+------------+----------+
+|    1 | root@localhost | INSERIU | 2020-11-23 | 11:18:50 |
+|    2 | root@localhost | INSERIU | 2020-11-23 | 11:18:50 |
+|    3 | root@localhost | INSERIU | 2020-11-23 | 11:20:44 |
+|    1 | root@localhost | ALTEROU | 2020-11-23 | 11:21:21 |
+|    2 | root@localhost | ALTEROU | 2020-11-23 | 11:21:21 |
+|    3 | root@localhost | ALTEROU | 2020-11-23 | 11:21:21 |
++------+----------------+---------+------------+----------+
+6 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> delete from tabfun where idfun = 2;
+Query OK, 1 row affected (0.055 sec)
+
+MariaDB [testetrigger]> select * from tabfun;
++-------+---------+------+------------+---------+
+| IDFUN | NOMEFUN | CPF  | DATAADM    | SALARIO |
++-------+---------+------+------------+---------+
+|     1 | Valter  | 1111 | 2007-07-07 | 3300.00 |
+|     3 | Ricardo | 3333 | 2000-10-10 | 4180.00 |
++-------+---------+------+------------+---------+
+2 rows in set (0.001 sec)
+
+MariaDB [testetrigger]> select * from tablog;
++------+----------------+---------+------------+----------+
+| ID   | USUARIO        | ACAO    | DATA       | HORA     |
++------+----------------+---------+------------+----------+
+|    1 | root@localhost | INSERIU | 2020-11-23 | 11:18:50 |
+|    2 | root@localhost | INSERIU | 2020-11-23 | 11:18:50 |
+|    3 | root@localhost | INSERIU | 2020-11-23 | 11:20:44 |
+|    1 | root@localhost | ALTEROU | 2020-11-23 | 11:21:21 |
+|    2 | root@localhost | ALTEROU | 2020-11-23 | 11:21:21 |
+|    3 | root@localhost | ALTEROU | 2020-11-23 | 11:21:21 |
+|    2 | root@localhost | EXCLUIU | 2020-11-23 | 11:22:07 |
++------+----------------+---------+------------+----------+
+7 rows in set (0.001 sec)
+
+MariaDB [testetrigger]> drop database testetrigger;
+Query OK, 2 rows affected (0.844 sec)
+
+MariaDB [(none)]> source triggers.sql
+Query OK, 1 row affected (0.002 sec)
+
+Database changed
+Query OK, 0 rows affected (0.391 sec)
+
+Query OK, 0 rows affected (0.232 sec)
+
+Query OK, 0 rows affected (0.262 sec)
+
+Query OK, 0 rows affected (0.207 sec)
+
+Query OK, 0 rows affected (0.077 sec)
+
+Query OK, 0 rows affected (0.128 sec)
+
+MariaDB [testetrigger]> show tables;
++------------------------+
+| Tables_in_testetrigger |
++------------------------+
+| tabfun                 |
+| tablog                 |
++------------------------+
+2 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> insert into tabfun (nomefun, cpf, dataadm, salario) values
+    -> ('Daniel', 1111, '2000-01-01', 3000),
+    -> ('Maria', 2222, '2010-10-01', 3500),
+    -> ('Valter', 3333, '2010-01-01', 4000);
+Query OK, 3 rows affected (0.164 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [testetrigger]> select * from tabfun
+    -> ;
++-------+---------+------+------------+---------+
+| IDFUN | NOMEFUN | CPF  | DATAADM    | SALARIO |
++-------+---------+------+------------+---------+
+|     1 | Daniel  | 1111 | 2000-01-01 | 3000.00 |
+|     2 | Maria   | 2222 | 2010-10-01 | 3500.00 |
+|     3 | Valter  | 3333 | 2010-01-01 | 4000.00 |
++-------+---------+------+------------+---------+
+3 rows in set (0.001 sec)
+
+MariaDB [testetrigger]> select * from tablog;
++------+----------------+---------+------------+----------+----------+-----------+
+| ID   | USUARIO        | ACAO    | DATA       | HORA     | salantes | saldepois |
++------+----------------+---------+------------+----------+----------+-----------+
+|    1 | root@localhost | INSERIU | 2020-11-23 | 11:29:44 |     NULL |      NULL |
+|    2 | root@localhost | INSERIU | 2020-11-23 | 11:29:44 |     NULL |      NULL |
+|    3 | root@localhost | INSERIU | 2020-11-23 | 11:29:44 |     NULL |      NULL |
++------+----------------+---------+------------+----------+----------+-----------+
+3 rows in set (0.001 sec)
+
+MariaDB [testetrigger]> update tabfun set salario = 10000 where idfun=1;
+ERROR 1146 (42S02): Table 'testetrigger.TABLOGSAL' doesn't exist
+MariaDB [testetrigger]> drop database testetrigger;
+Query OK, 2 rows affected (0.684 sec)
+
+MariaDB [(none)]> source triggers.sql
+Query OK, 1 row affected (0.002 sec)
+
+Database changed
+Query OK, 0 rows affected (0.250 sec)
+
+Query OK, 0 rows affected (0.365 sec)
+
+Query OK, 0 rows affected (0.129 sec)
+
+Query OK, 0 rows affected (0.097 sec)
+
+Query OK, 0 rows affected (0.107 sec)
+
+Query OK, 0 rows affected (0.091 sec)
+
+MariaDB [testetrigger]> show tables;
++------------------------+
+| Tables_in_testetrigger |
++------------------------+
+| tabfun                 |
+| tablog                 |
++------------------------+
+2 rows in set (0.001 sec)
+
+MariaDB [testetrigger]> insert into tabfun (nomefun, cpf, dataadm, salario) values
+    -> ('Daniel', 1111, '2000-01-01', 3000),
+    -> ('Maria', 2222, '2010-10-01', 3500),
+    -> ('Valter', 3333, '2010-01-01', 4000);
+Query OK, 3 rows affected (0.229 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [testetrigger]> select * from tabfun;
++-------+---------+------+------------+---------+
+| IDFUN | NOMEFUN | CPF  | DATAADM    | SALARIO |
++-------+---------+------+------------+---------+
+|     1 | Daniel  | 1111 | 2000-01-01 | 3000.00 |
+|     2 | Maria   | 2222 | 2010-10-01 | 3500.00 |
+|     3 | Valter  | 3333 | 2010-01-01 | 4000.00 |
++-------+---------+------+------------+---------+
+3 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> select * from tablog;
++------+----------------+---------+------------+----------+----------+-----------+
+| ID   | USUARIO        | ACAO    | DATA       | HORA     | salantes | saldepois |
++------+----------------+---------+------------+----------+----------+-----------+
+|    1 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    2 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    3 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
++------+----------------+---------+------------+----------+----------+-----------+
+3 rows in set (0.001 sec)
+
+MariaDB [testetrigger]> update tabfun set salario = 10000 where idfun=1;
+Query OK, 1 row affected (0.058 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [testetrigger]> select * from tablog;
++------+----------------+---------+------------+----------+----------+-----------+
+| ID   | USUARIO        | ACAO    | DATA       | HORA     | salantes | saldepois |
++------+----------------+---------+------------+----------+----------+-----------+
+|    1 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    2 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    3 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    1 | root@localhost | ALTEROU | 2020-11-23 | 11:32:03 |     NULL |      NULL |
+|    1 | root@localhost | ALTEROU | 2020-11-23 | 11:32:03 |  3000.00 |  10000.00 |
++------+----------------+---------+------------+----------+----------+-----------+
+5 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> update tabfun set cpf9999 where idfun=3;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'where idfun=3' at line 1
+MariaDB [testetrigger]> update tabfun set cpf=9999 where idfun=3;
+Query OK, 1 row affected (0.144 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [testetrigger]> select * from tablog;
++------+----------------+---------+------------+----------+----------+-----------+
+| ID   | USUARIO        | ACAO    | DATA       | HORA     | salantes | saldepois |
++------+----------------+---------+------------+----------+----------+-----------+
+|    1 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    2 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    3 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    1 | root@localhost | ALTEROU | 2020-11-23 | 11:32:03 |     NULL |      NULL |
+|    1 | root@localhost | ALTEROU | 2020-11-23 | 11:32:03 |  3000.00 |  10000.00 |
+|    3 | root@localhost | ALTEROU | 2020-11-23 | 11:32:44 |     NULL |      NULL |
+|    3 | root@localhost | ALTEROU | 2020-11-23 | 11:32:44 |  4000.00 |   4000.00 |
++------+----------------+---------+------------+----------+----------+-----------+
+7 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> awlwct * from tabfun
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'awlwct * from tabfun' at line 1
+MariaDB [testetrigger]> select * from tabfun
+    -> ;
++-------+---------+------+------------+----------+
+| IDFUN | NOMEFUN | CPF  | DATAADM    | SALARIO  |
++-------+---------+------+------------+----------+
+|     1 | Daniel  | 1111 | 2000-01-01 | 10000.00 |
+|     2 | Maria   | 2222 | 2010-10-01 |  3500.00 |
+|     3 | Valter  | 9999 | 2010-01-01 |  4000.00 |
++-------+---------+------+------------+----------+
+3 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> delete from tabfun where idfun=2;
+Query OK, 1 row affected (0.142 sec)
+
+MariaDB [testetrigger]> select * from tabfun;
++-------+---------+------+------------+----------+
+| IDFUN | NOMEFUN | CPF  | DATAADM    | SALARIO  |
++-------+---------+------+------------+----------+
+|     1 | Daniel  | 1111 | 2000-01-01 | 10000.00 |
+|     3 | Valter  | 9999 | 2010-01-01 |  4000.00 |
++-------+---------+------+------------+----------+
+2 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> select * from tablog;
++------+----------------+---------+------------+----------+----------+-----------+
+| ID   | USUARIO        | ACAO    | DATA       | HORA     | salantes | saldepois |
++------+----------------+---------+------------+----------+----------+-----------+
+|    1 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    2 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    3 | root@localhost | INSERIU | 2020-11-23 | 11:31:44 |     NULL |      NULL |
+|    1 | root@localhost | ALTEROU | 2020-11-23 | 11:32:03 |     NULL |      NULL |
+|    1 | root@localhost | ALTEROU | 2020-11-23 | 11:32:03 |  3000.00 |  10000.00 |
+|    3 | root@localhost | ALTEROU | 2020-11-23 | 11:32:44 |     NULL |      NULL |
+|    3 | root@localhost | ALTEROU | 2020-11-23 | 11:32:44 |  4000.00 |   4000.00 |
+|    2 | root@localhost | EXCLUIU | 2020-11-23 | 11:33:52 |     NULL |      NULL |
++------+----------------+---------+------------+----------+----------+-----------+
+8 rows in set (0.000 sec)
+
+MariaDB [testetrigger]> use vendas;
+Database changed
+MariaDB [vendas]> show tables;
++------------------+
+| Tables_in_vendas |
++------------------+
+| itemnota         |
+| notafiscal       |
+| produto          |
++------------------+
+3 rows in set (0.001 sec)
+
+MariaDB [vendas]> select * from produto;
+Empty set (0.085 sec)
+
+MariaDB [vendas]> select * from notafiscal;
+Empty set (0.118 sec)
+
+MariaDB [vendas]> select * from itemnota;
+Empty set (0.111 sec)
+
+MariaDB [vendas]> tee exercicios2.log

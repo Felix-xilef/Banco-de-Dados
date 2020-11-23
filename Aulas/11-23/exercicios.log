@@ -1,0 +1,94 @@
+MariaDB [escola]> source exercicios.sql
+Query OK, 0 rows affected (0.112 sec)
+
+Query OK, 0 rows affected (0.121 sec)
+
+MariaDB [escola]> select * from show_proc;
++-------------+
+| name        |
++-------------+
+| buscamedia  |
+| buscanota   |
+| buscasexo   |
+| cursomedia  |
+| p_idadesexo |
+| p_nasc      |
++-------------+
+6 rows in set (0.001 sec)
+
+MariaDB [escola]> drop procedure p_nasc;
+Query OK, 0 rows affected (0.146 sec)
+
+MariaDB [escola]> source exercicios.sql
+Query OK, 0 rows affected (0.161 sec)
+
+MariaDB [escola]> select * from show_proc;
++-------------+
+| name        |
++-------------+
+| buscamedia  |
+| buscanota   |
+| buscasexo   |
+| cursomedia  |
+| p_idadesexo |
+| p_nasc      |
++-------------+
+6 rows in set (0.001 sec)
+
+MariaDB [escola]> call p_nasc('2000');
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso       | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+|         1 | Carlos    | Santos    | m    | 2000-10-10 | informatica |  5.00 |  0.00 |
+|         7 | Paulo     | Ribeiro   | m    | 2000-02-15 | mecanica    |  7.00 |  8.50 |
+|         8 | Vera      | Sampaio   | f    | 2000-05-20 | informatica | 10.00 |  9.00 |
+|        11 | Vera      | Machado   | f    | 2000-10-26 | ADS         |  5.70 | 10.00 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+4 rows in set (0.001 sec)
+
+Query OK, 0 rows affected (0.014 sec)
+
+MariaDB [escola]> call p_idadesexo(20, 'm');
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso       | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+|         1 | Carlos    | Santos    | m    | 2000-10-10 | informatica |  5.00 |  0.00 |
+|         7 | Paulo     | Ribeiro   | m    | 2000-02-15 | mecanica    |  7.00 |  8.50 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+2 rows in set (0.108 sec)
+
+Query OK, 0 rows affected (0.116 sec)
+
+MariaDB [escola]> call p_idadesexo(20, 'f');
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso       | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+|         8 | Vera      | Sampaio   | f    | 2000-05-20 | informatica | 10.00 |  9.00 |
+|        11 | Vera      | Machado   | f    | 2000-10-26 | ADS         |  5.70 | 10.00 |
++-----------+-----------+-----------+------+------------+-------------+-------+-------+
+2 rows in set (0.001 sec)
+
+Query OK, 0 rows affected (0.008 sec)
+
+MariaDB [escola]> call p_idadesexo(19, 'f');
++-----------+-----------+-----------+------+------------+----------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso    | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+----------+-------+-------+
+|         6 | Carmen    | Silva     | f    | 2001-04-01 | mecanica |  5.00 |  6.50 |
++-----------+-----------+-----------+------+------------+----------+-------+-------+
+1 row in set (0.001 sec)
+
+Query OK, 0 rows affected (0.006 sec)
+
+MariaDB [escola]> call p_idadesexo(18, 'f');
++-----------+-----------+-----------+------+------------+-------+-------+-------+
+| matricula | nomealuno | sobrenome | sexo | datanasc   | curso | nota1 | nota2 |
++-----------+-----------+-----------+------+------------+-------+-------+-------+
+|         5 | Tania     | Silva     | f    | 2002-11-15 | artes |  5.00 |  7.50 |
+|        10 | Elen      | Menezes   | f    | 2001-12-25 | artes |  8.00 |  8.00 |
++-----------+-----------+-----------+------+------------+-------+-------+-------+
+2 rows in set (0.000 sec)
+
+Query OK, 0 rows affected (0.008 sec)
+
+MariaDB [escola]> tee funcoes.log
