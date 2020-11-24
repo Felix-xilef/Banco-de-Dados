@@ -13,24 +13,24 @@ create table Hospede (
 );
 
 create table Quarto (
-    numero char(4) primary key,
+    numero int primary key,
     status varchar(10) default 'livre'
 );
 
 create table Servico (
     codServico int primary key auto_increment,
     descricao varchar(70) not null,
-    valor decimal(5.2) not null check(valor >= 0)
+    valor numeric(5,2) not null check(valor >= 0)
 );
 
 create table ProdutoFrigobar (
     codProduto int primary key auto_increment,
     descricao varchar(70) not null,
-    valor decimal(5.2) not null check(valor >= 0)
+    valor numeric(5,2) not null check(valor >= 0)
 );
 
 create table Reserva (
-    numeroQuarto char(3),
+    numeroQuarto int,
     dataEntrada date,
     cpfHospede char(11) not null,
     dataSaida date check(timestampdiff(day, dataEntrada, dataSaida) >= 0),
@@ -40,11 +40,11 @@ create table Reserva (
 );
 
 create table Hospedagem (
-    numeroQuarto char(3),
+    numeroQuarto int,
     dataEntrada date,
     cpfHospede char(11) not null,
     dataSaida date check(timestampdiff(day, dataEntrada, dataSaida) >= 0),
-    valorDiaria decimal(5.2) not null check(valorDiaria >= 0),
+    valorDiaria numeric(5,2) not null check(valorDiaria >= 0),
     codHospedagem int not null unique auto_increment,
     primary key(numeroQuarto, dataEntrada),
     foreign key(numeroQuarto) references Quarto(numero),
@@ -89,7 +89,7 @@ create table ConsumoProduto (
 );
 
 /* Exercício c */
-create view v_hospedagem as select numeroQuarto, dataEntrada, nome as nomeHospede, cpfHospede, valorDiaria, codSolicitacao, s.dataHora as dataHoraSolicitacao, s.nomeSolicitante as solicitanteSolicitacao, codConsumo, c.dataHora as dataHoraConsumo, c.nomeSolicitante as solicitanteConsumo from Hospedagem hgem left join Hospede on cpfHospede = cpf left join Solicitacao s on hgem.codHospedagem = s.codHospedagem left join Consumo c on hgem.codHospedagem = c.codHospedagem;
+create view v_hospedagem as select numeroQuarto, dataEntrada, dataSaida, nome as nomeHospede, cpfHospede, valorDiaria, timestampdiff(day, dataEntrada, dataSaida)*valorDiaria as TotalDiariasPrevisto  from Hospedagem left join Hospede on cpfHospede = cpf;
 
 create view v_solicitacoes as select cpfHospede, dataHora, nomeSolicitante, descricao, valor, quantidade, (valor*quantidade) as total from Solicitacao s left join Hospedagem h on s.codHospedagem = h.codHospedagem left join SolicitacaoServico ss on s.codSolicitacao = ss.codSolicitacao left join Servico serv on ss.codServico = serv.codServico;
 
@@ -103,15 +103,35 @@ insert into Hospede values
 ;
 
 /* Exercício f */
-
+insert into Quarto values
+    (1001, 'oculpado'),
+    (1002, default),
+    (1003, 'oculpado'),
+    (1004, default)
+;
 
 /* Exercício g */
-
+insert into ProdutoFrigobar values
+    (default, 'Refrigerante 300ml', 3.5),
+    (default, 'Água garrafa 650ml', 2.5),
+    (default, 'Chocolate Nestle 50g', 3)
+;
 
 /* Exercício h */
-
+insert into Reserva values
+    (1001, '2021-01-06', '31415926536', '2021-01-11'),
+    (1004, '2020-12-13', '44689952143', '2020-12-18')
+;
 
 /* Exercício i */
-
+insert into Hospedagem values
+    (1003, '2020-11-20', '31415926536', '2020-11-25', 95.5, default),
+    (1001, '2020-11-23', '56977820014', '2020-11-30', 105.5, default)
+;
 
 /* Exercício j */
+insert into Servico values
+    (default, 'Troca extra de toalha', 5),
+    (default, 'Lavagem de roupas 10 peças', 9.9),
+    (default, 'Lavagem de roupas 1kg', 15)
+;
