@@ -1,2 +1,2 @@
 # Banco de Dados
- Exercícios da disciplina de Banco de Dados
+ Exercícios realizados na disciplina de Banco de Dados
